@@ -1,10 +1,9 @@
 import * as React from "react";
 import * as ReactDom from "react-dom";
-import { BaseClientSideWebPart, WebPartContext } from '@microsoft/sp-webpart-base';
-import App, { AppProps, AppState } from "../../App";
+import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+import App, { AppProps } from "../../App";
 import { ServiceScope } from "@microsoft/sp-core-library";
 import { Events } from "../../model/Events";
-import * as moment from "moment";
 import { ZermeloLiveRosterService } from "../../services/ZermeloLiveRosterService";
 
 

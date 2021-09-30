@@ -70,11 +70,11 @@ export class ZermeloLiveRosterService {
             let events: Events = [];
             for (let week = 0; week < weeks; week++) {
                 events.push(...await this.getEvents(moment().year() + "" + moment().add(week, "w").week()));
-            };
+            }
             return Promise.resolve(events);
         }
         catch (error) {
-            return Promise.reject(error)
+            return Promise.reject(error);
         }
     }
 }
