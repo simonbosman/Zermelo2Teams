@@ -1,0 +1,19 @@
+{
+    "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+    "version": "2.0",
+    "bundles": {
+      "speyk-teams-zermelo-web-part": {
+        "components": [
+          {
+            "entrypoint": "./lib/webparts/speykTeamsZermelo/SpeykTeamsZermeloWebPart.js",
+            "manifest": "./src/webparts/speykTeamsZermelo/SpeykTeamsZermeloWebPart.manifest.json"
+          }
+        ]
+      }
+    },
+    "externals": {},
+    "localizedResources": {
+      "SpeykTeamsZermeloWebPartStrings": "lib/webparts/speykTeamsZermelo/loc/{locale}.js"
+    }
+  }
+  
