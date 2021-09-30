@@ -6,11 +6,13 @@ import { ServiceScope } from "@microsoft/sp-core-library";
 import { Events } from "../../model/Events";
 import { ZermeloLiveRosterService } from "../../services/ZermeloLiveRosterService";
 
+type SpeykZermeloWebPartProps ={
+  description: string;
+};
 
-export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<{}> {
+export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<SpeykZermeloWebPartProps> {
  
   private events: Events;
-
   private zermeloLiveRosterService: ZermeloLiveRosterService;
  
   public onInit(): Promise<void> {
@@ -19,14 +21,6 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<{}> 
       serviceScope.whenFinished((): void => {
         this.zermeloLiveRosterService = serviceScope.consume(ZermeloLiveRosterService.serviceKey);
       });
-  
-      try {
-        this.events = await this.zermeloLiveRosterService.getEventsForWeeks(3);
-      }
-      catch(error) {
-        console.error(error);
-        reject(error);
-      }
       resolve();
     });
   }
@@ -35,7 +29,7 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<{}> 
   public render(): void {
     const app: React.ReactElement<AppProps> = React.createElement(
       App, {
-        events: this.events,
+        zermeloLiveRosterService: this.zermeloLiveRosterService,
         context: this.context
       });
     ReactDom.render(app, this.domElement);
