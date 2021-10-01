@@ -1,19 +1,19 @@
 import { ServiceKey } from "@microsoft/sp-core-library";
 import * as moment from "moment";
 import "moment/locale/nl";
-import { Events } from "../model/Events";
+import { ZermeloEvents } from "../model/ZermeloEvent";
 
 export class ZermeloLiveRosterService {
    
-    private token: string = "5laek7o5hr2ipv45qu4h2ml774";
-    private student: string = "138888";
-    private clientUrl = "https://v21-10-speyk.zportal.nl";
+    private readonly token: string = "5laek7o5hr2ipv45qu4h2ml774";
+    private readonly student: string = "138888";
+    private readonly clientUrl = "https://v21-10-speyk.zportal.nl";
 
     public static readonly serviceKey: ServiceKey<ZermeloLiveRosterService> = 
     ServiceKey.create<ZermeloLiveRosterService>("App.ZermeloLiveRosterService", ZermeloLiveRosterService);
 
-    private zermeloToTeamsEvents(appointments: any): Events {
-        let events: Events = [];
+    private zermeloToTeamsEvents(appointments: any): ZermeloEvents {
+        let events: ZermeloEvents = [];
         appointments.map((appointment) => {
             let subjects: string = (appointment.subjects as Array<string>).join();
             let locations: string = (appointment.locations as Array<string>).join();
@@ -37,7 +37,7 @@ export class ZermeloLiveRosterService {
     }
 
     
-    private async getEvents(week: string): Promise<Events> {
+    private async getEvents(week: string): Promise<ZermeloEvents> {
         try {
             const data: Response = await fetch(
                 `${this.clientUrl}:443/api/v3/liveschedule?` +
@@ -67,7 +67,7 @@ export class ZermeloLiveRosterService {
 
     public async getEventsForWeeks(weeks: number) {
         try {
-            let events: Events = [];
+            let events: ZermeloEvents = [];
             for (let week = 0; week < weeks; week++) {
                 events.push(...await this.getEvents(moment().year() + "" + moment().add(week, "w").week()));
             }

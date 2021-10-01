@@ -3,7 +3,6 @@ import * as ReactDom from "react-dom";
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import App, { AppProps } from "../../App";
 import { ServiceScope } from "@microsoft/sp-core-library";
-import { Events } from "../../model/Events";
 import { ZermeloLiveRosterService } from "../../services/ZermeloLiveRosterService";
 
 type SpeykZermeloWebPartProps ={
@@ -12,7 +11,6 @@ type SpeykZermeloWebPartProps ={
 
 export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<SpeykZermeloWebPartProps> {
  
-  private events: Events;
   private zermeloLiveRosterService: ZermeloLiveRosterService;
  
   public onInit(): Promise<void> {
@@ -25,7 +23,6 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<Spey
     });
   }
   
-
   public render(): void {
     const app: React.ReactElement<AppProps> = React.createElement(
       App, {

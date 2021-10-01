@@ -9,6 +9,7 @@
     "test": "gulp test"
   },
   "dependencies": {
+    "@fluentui/react": "^7.177.1",
     "@fluentui/react-northstar": "^0.59.0",
     "@microsoft/sp-core-library": "1.12.1",
     "@microsoft/sp-office-ui-fabric-core": "1.12.1",

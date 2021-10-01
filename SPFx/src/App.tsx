@@ -2,7 +2,7 @@ import { WebPartContext } from '@microsoft/sp-webpart-base';
 import * as React from 'react';
 import { Provider, teamsTheme, Loader } from '@fluentui/react-northstar';
 import CalendarComponent, { CalendarProps } from './components/CalendarComponent';
-import { Events } from './model/Events';
+import { ZermeloEvents } from './model/ZermeloEvent';
 import { ZermeloLiveRosterService } from './services/ZermeloLiveRosterService';
 
 export type AppProps = {
@@ -11,7 +11,7 @@ export type AppProps = {
 };
 
 type AppState = {
-    events: Events;
+    events: ZermeloEvents;
     isLoading: boolean;
 };
 
@@ -31,31 +31,33 @@ export default class App extends React.Component<AppProps, AppState> {
 
     private async getItems(): Promise<void> {
         try {
-            this.setState({isLoading: true});
-            let events: Events = await this.props.zermeloLiveRosterService.getEventsForWeeks(3);
+            const { zermeloLiveRosterService } = this.props;
+            this.setState({ isLoading: true} );
+            let events: ZermeloEvents = await zermeloLiveRosterService.getEventsForWeeks(3);
             this.setState({
                 isLoading: false,
                 events: events
             });
           }
           catch(error) {
-            this.setState({isLoading: false});
+            this.setState({ isLoading: false });
             console.error(error);
           }
     }
 
     public render(): React.ReactElement<CalendarProps> {
-        const events: Events = [];
+        const { events } = this.state;
+        const { isLoading } = this.state;
         return(
             <Provider theme={teamsTheme}>
                <div>
                 {
-                    this.state.isLoading &&
-                     <Loader label="Rooster wordt opgehaald..."/>
+                    isLoading &&
+                     <Loader label={{content: "Rooster wordt opgehaald...", size: "large"}} size="larger"/>
                 }
                 {   
-                    this.state.events.length > 0 &&
-                    <CalendarComponent events={this.state.events} context={this.context}/>
+                    events.length > 0 &&
+                    <CalendarComponent events={events} context={this.context}/>
                 }
             </div>
             </Provider>
