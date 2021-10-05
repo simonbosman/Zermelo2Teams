@@ -2,60 +2,92 @@ import { ServiceKey } from "@microsoft/sp-core-library";
 import * as moment from "moment";
 import "moment/locale/nl";
 import { ZermeloEvents } from "../model/ZermeloEvent";
+import { AppointmentsEntity, ZermeloRestLiveRosterResp } from "../model/ZermeloRestLIveRosterResp";
+
+export type zermeloUrlParams = {
+    clientUrl: string;
+    token: string; 
+    student: string; 
+    week: string;
+}; 
+
+const createZermeloUrl = (params: zermeloUrlParams): string => {
+    return `${params.clientUrl}:443/api/v3/liveschedule?` +
+        `student=${params.student}&` +
+        `week=${params.week}&` +
+        `fields=appointmentInstance,start,end,startTimeSlotName,endTimeSlotName,subjects,groups,` +
+        `locations,teachers,cancelled,changeDescription,schedulerRemark,content,appointmentType`;
+};
+
 
 export class ZermeloLiveRosterService {
    
-    private readonly token: string = "5laek7o5hr2ipv45qu4h2ml774";
-    private readonly student: string = "138888";
-    private readonly clientUrl = "https://v21-10-speyk.zportal.nl";
+    private params: zermeloUrlParams;
 
-    public static readonly serviceKey: ServiceKey<ZermeloLiveRosterService> = 
-    ServiceKey.create<ZermeloLiveRosterService>("App.ZermeloLiveRosterService", ZermeloLiveRosterService);
-
-    private zermeloToTeamsEvents(appointments: any): ZermeloEvents {
+    private zermeloToTeamsEvents(appointments: AppointmentsEntity[]): ZermeloEvents {
         let events: ZermeloEvents = [];
         appointments.map((appointment) => {
-            let subjects: string = (appointment.subjects as Array<string>).join();
-            let locations: string = (appointment.locations as Array<string>).join();
             if (appointment.appointmentType === "choice") {
                 events.push({
-                    "id": appointment.appointmentInstance,
-                    "title":`Keuzeles`,
-                    "start": new Date(appointment.start * 1000),
-                    "end": new Date(appointment.end * 1000),
-                    "choices": appointment.actions});
-            } else {
-                events.push({
+                    "title": `${appointment.actions.length} keuzevakken`,
+                    "type": appointment.appointmentType,
+                    "choices": appointment.actions,
                     "id": appointment.id,
-                    "title": `${subjects} . ${locations}`,
                     "start": new Date(appointment.start * 1000),
                     "end": new Date(appointment.end * 1000),
-                    "choices": null});
-            }    
+                    "subjects": appointment.subjects,
+                    "locations": appointment.locations,
+                    "teachers": appointment.teachers,
+                    "groups": appointment.groups}); 
+            } 
+            else if (appointment.appointmentType === "conflict") {
+                events.push({
+                    "title": `${appointment.actions.length} conflicten`,
+                    "type": appointment.appointmentType,
+                    "choices": appointment.actions,
+                    "id": appointment.id,
+                    "start": new Date(appointment.start * 1000),
+                    "end": new Date(appointment.end * 1000),
+                    "subjects": appointment.subjects,
+                    "locations": appointment.locations,
+                    "teachers": appointment.teachers,
+                    "groups": appointment.groups}); 
+            } 
+            else {
+                events.push({
+                "id": appointment.id,
+                "start": new Date(appointment.start * 1000),
+                "end": new Date(appointment.end * 1000),
+                "subjects": appointment.subjects,
+                "locations": appointment.locations,
+                "teachers": appointment.teachers,
+                "groups": appointment.groups}); 
+            }
         });
         return events;
     }
-
     
     private async getEvents(week: string): Promise<ZermeloEvents> {
         try {
+            const params: zermeloUrlParams = {
+                ...this.params,
+                week: week
+            };
+            
             const data: Response = await fetch(
-                `${this.clientUrl}:443/api/v3/liveschedule?` +
-                `student=${this.student}&`+
-                `week=${week}&`+
-                `fields=appointmentInstance,start,end,startTimeSlotName,endTimeSlotName,subjects,groups,locations,`+
-                `teachers,cancelled,changeDescription,schedulerRemark,content,appointmentType`, { 
+               createZermeloUrl(params), { 
                     method: "get", 
                     headers: new Headers({
-                        "Authorization": `Bearer ${this.token}`, 
-                        "User-Agent": "SPEYK Zermelo Teams App"
+                        "Authorization": `Bearer ${params.token}`, 
+                        "User-Agent": "SPEYK Zermelo Teams App",
+                       // "X-Impersonate": "138888"
                 })
             });
 
             if (data.ok) {
-                const results = await data.json();
+                const results: ZermeloRestLiveRosterResp = await data.json();
                 if (results.response.status === 200) {
-                    let appointments = results.response.data[0].appointments;
+                    let appointments: AppointmentsEntity[] = results.response.data[0].appointments;
                     return Promise.resolve(this.zermeloToTeamsEvents(appointments));
                 }
             }
@@ -64,12 +96,19 @@ export class ZermeloLiveRosterService {
             return Promise.reject(error);
         }        
     }
+   
+    public static readonly serviceKey: ServiceKey<ZermeloLiveRosterService> = 
+    ServiceKey.create<ZermeloLiveRosterService>("App.ZermeloLiveRosterService", ZermeloLiveRosterService);
 
+    public setZermelUrlParam (params: zermeloUrlParams) {
+        this.params = params;
+    }
+   
     public async getEventsForWeeks(weeks: number) {
         try {
             let events: ZermeloEvents = [];
-            for (let week = 0; week < weeks; week++) {
-                events.push(...await this.getEvents(moment().year() + "" + moment().add(week, "w").week()));
+            for(let w = 0; w < 3; w++) {
+                events.push(...await this.getEvents(moment().year() + "" + moment().add(w, "w").week()));
             }
             return Promise.resolve(events);
         }
