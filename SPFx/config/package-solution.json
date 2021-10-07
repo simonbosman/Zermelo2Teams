@@ -2,8 +2,8 @@
     "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
     "solution": {
         "name": "speyk-teams-zermelo-client-side-solution",
-        "id": "8d789ecb-3747-428d-a11b-1ba3c80c338f",
-        "version": "1.0.0.0",
+        "id": "dfe06596-f6c4-479a-a442-9e64cd4efb09",
+        "version": "1.1.0.0",
         "includeClientSideAssets": true,
         "skipFeatureDeployment": true,
         "isDomainIsolated": false,

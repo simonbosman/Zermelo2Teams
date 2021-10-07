@@ -13,11 +13,11 @@
   "preconfiguredEntries": [{
     "groupId": "5c03119e-3074-46fd-976b-c60198311f70", 
     "group": { "default": "Other" },
-    "title": { "default": "SpeykTeamsZermelo" },
+    "title": { "default": "Zermelo-Rooster" },
     "description": { "default": "Zermelo rooster in teams" },
     "officeFabricIconFontName": "Page",
     "properties": {
-      "description": "SpeykTeamsZermelo"
+      "description": "Zermelo rooster in teams"
     }
   }]
 }

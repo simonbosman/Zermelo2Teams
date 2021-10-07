@@ -1,33 +1,15 @@
 import * as React from "react";
-import { Messages, Calendar, momentLocalizer, Views, DayPropGetter } from "react-big-calendar";
-import  styles  from "./CalendarComponent.module.scss";
+import { Calendar, momentLocalizer, Views } from "react-big-calendar";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import * as moment from 'moment';
 import { WebPartContext } from "@microsoft/sp-webpart-base";
 import { ZermeloEvent, ZermeloEvents } from "../model/ZermeloEvent";
-import { Dialog, Form, FormRadioGroup, RadioGroupItemProps, stringLiteralsArray } from "@fluentui/react-northstar";
-import { ActionsEntity, Appointment } from "../model/ZermeloRestLIveRosterResp";
+import { CloseIcon, Dialog, RadioGroup, RadioGroupItemProps, ShorthandCollection} from "@fluentui/react-northstar";
+import { ActionsEntity } from "../model/ZermeloRestLIveRosterResp";
+import { EventDay, eventPropGetter, EventWorkWeek, messages } from "./CalendarComponentHelpers";
 
 const localizer = momentLocalizer(moment);
 
-const messages: Messages = {
-    allDay: 'Hele dag',
-    previous: 'Vorige',
-    next: 'Volgende',
-    today: 'Vandaag',
-    month: 'Maand',
-    week: 'Week',
-    work_week: 'Werkweek',
-    day: 'Dag',
-    agenda: 'Agenda',
-    date: 'Datum',
-    time: 'Tijd',
-    event: 'Afspraak', 
-    yesterday: 'Gisteren',
-    tomorrow: 'Morgen',
-    showMore: (count: number) => `+ ${count} afspraken`, 
-    noEventsInRange: 'Geen afspraken binnen range'
-};
 
 export type CalendarProps = {
     events: ZermeloEvents
@@ -36,81 +18,10 @@ export type CalendarProps = {
 
 export type CalendarStates = {
     isOpen: boolean,
-    appointmentChoices: Appointment[],
+    appointmentActions: ActionsEntity[],
     startDate: Date,
     endDate: Date
 };
-
-const EventDay: React.FunctionComponent<{event: ZermeloEvent, title: string}> = eventComp => {
-    const { subjects } = eventComp.event;
-    const { locations } = eventComp.event;
-    const { teachers } = eventComp.event;
-    let subjectsRender: string =  (subjects !== undefined) ? subjects.join().toUpperCase() : "";
-    let locationsRender: string  = (locations !== undefined) ? locations.join() : "";
-    let teachersRender: string = (teachers !== undefined) ? teachers.join() : "";
-    
-    if(eventComp.title != null) {
-        return (
-            <span><strong>{eventComp.title}</strong></span>
-        );
-    }
-    else if (subjectsRender == "PAUZE") {
-        return (
-            <span><strong>pauze - {locationsRender}</strong></span>
-        );
-    }
-    else { 
-        return (
-            <span>
-                <strong>{eventComp.title}{subjectsRender} . {locationsRender} . {teachersRender}</strong><br/>
-            </span>
-        );
-    }
-};
-
-const EventWorkWeek: React.FunctionComponent<{event: ZermeloEvent, title: string}> = eventComp => {
-    const { subjects } = eventComp.event;
-    const { locations } = eventComp.event;
-    const { teachers } = eventComp.event;
-    let subjectsRender: string =  (subjects !== undefined) ? subjects.join().toUpperCase() : "";
-    let locationsRender: string  = (locations !== undefined) ? locations.join() : "";
-    let teachersRender: string = (teachers !== undefined) ? teachers.join() : "";
-    if(eventComp.title != null) {
-        return (
-            <span><strong>{eventComp.title}</strong></span>
-        );
-    }
-    else if (subjectsRender == "PAUZE") {
-        return (
-            <span><strong>{locationsRender}</strong></span>
-        );
-    }
-    else {
-        return (
-            <span>
-                <strong>{eventComp.title}{subjectsRender} <br/> {locationsRender} . {teachersRender}</strong><br/>
-            </span>
-        );
-    }  
-};
-  
-const eventPropGetter = (event: ZermeloEvent, 
-                        star: Date, 
-                        end:Date, 
-                        isSelected: boolean) => {
-                            let bg = (event.type == null) ? "#E9EAF6" : ((event.type === "conflict") ? "LightPink" : "LightGreen");
-                            let newStyle = {
-                                backgroundColor: bg,
-                                color: 'black',
-                                border: "1px solid white",
-                                borderLeft: "4px solid rgb(98, 100, 167)",
-                                borderRadius: "4px",
-                            };
-                            return {
-                                style: newStyle
-                            };
- };
-  
 
 export default class CalendarComponent extends React.Component<CalendarProps, CalendarStates> {
 
@@ -119,40 +30,61 @@ export default class CalendarComponent extends React.Component<CalendarProps, Ca
         this.handleEventSelected = this.handleEventSelected.bind(this);
         this.state = {
             isOpen: false,
-            appointmentChoices: [],
+            appointmentActions: [],
             startDate: new Date(moment.now()),
             endDate: new Date(moment.now())
         };
     }
     
     private handleEventSelected(event: ZermeloEvent, e: React.SyntheticEvent) {
-        if (event.choices === null || event.choices.length === 0) return;
-        let appointmentChoices: Appointment[] = [];
-        event.choices.forEach(choice => {
-            appointmentChoices.push(choice.appointment);      
-        });
-        this.setState(
-            {
-                appointmentChoices: appointmentChoices,
+        if (event.choices == null || event.choices.length == 0) return;
+        this.setState({
+                appointmentActions: event.choices,
                 startDate: event.start,
-                endDate: event.end
+                endDate: event.end,
+                isOpen: true
             }
         );
-        this.setOpen(true);    
     }
 
     private setOpen(open: boolean) {
-        this.setState(
-            {
+        this.setState({
                 isOpen: open
             }
         );
     }
 
+    private getAppChoicesDialog(appointmentActions: ActionsEntity[]): ShorthandCollection<RadioGroupItemProps> {
+        let appointmentChoicesDialog = [];
+        if (appointmentActions != null &&  appointmentActions.length > 0) {
+            appointmentActions.forEach((action) => {
+                let isDisabled:boolean = false;
+                let statusMsg: string = "";
+               
+                if(action.status?.length > 0) {
+                    isDisabled = true;
+                    statusMsg = "STATUS: " + action.status?.map(s => s.nl).join();
+                }
+               
+                appointmentChoicesDialog.push(
+                    {
+                        disabled: isDisabled,
+                        name: "enroll",
+                        value: action.appointment.id.toString(),
+                        key: action.appointment.id,
+                        label: `${action.appointment.subjects.join().toUpperCase()} . ` + 
+                        `${action.appointment.locations.join()} . ${action.appointment.teachers.join()}  ` +
+                        `${statusMsg}`,
+                    });
+            });
+        }
+        return appointmentChoicesDialog;
+    }
+
     public render(){
         const { events } = this.props;
         const { isOpen } = this.state;
-        const { appointmentChoices } = this.state;
+        const { appointmentActions } = this.state;
         const { startDate } = this.state;
         const { endDate } = this.state;
         
@@ -160,18 +92,6 @@ export default class CalendarComponent extends React.Component<CalendarProps, Ca
         let endTime: string = `${endDate.getHours()}:${endDate.getMinutes()}`;
         let options: Intl.DateTimeFormatOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         let headerDate: string = `${startDate.toLocaleDateString("nl-NL", options)} ${startTime}-${endTime}`;
-        let appointmentChoicesDialog = [];
-        if (appointmentChoices !== null &&  appointmentChoices.length > 0) {
-            appointmentChoices.forEach((appointment) => {
-                appointmentChoicesDialog.push(
-                    {
-                        name: appointment.id,
-                        key: appointment.id,
-                        label: `${appointment.subjects.join().toUpperCase()} . ${appointment.teachers.join()} . ${appointment.locations.join()}`,
-                        value: "/api/v3/liveschedule/enrollment?enroll=" + appointment.id
-                    });
-            });
-        }
         
         return (
         <div>
@@ -198,19 +118,21 @@ export default class CalendarComponent extends React.Component<CalendarProps, Ca
                 }}
             />
             <Dialog
-                open={isOpen}   
-                onCancel={() => this.setOpen(false)}
-                onConfirm={() => this.setOpen(false)}
-                cancelButton="Annuleren"
+                open={isOpen}  
                 confirmButton="Inschrijven"
+                onConfirm={() => this.setOpen(false)} 
                 content={
-                    <Form>
-                        <FormRadioGroup vertical items = {appointmentChoicesDialog}
-                        />
-                    </Form>
+                    <RadioGroup 
+                        vertical 
+                        items={this.getAppChoicesDialog(appointmentActions)}/>
                 }
                 header={headerDate}
-                styles={{width: "25ww"}}
+                headerAction={{
+                    icon: <CloseIcon />,
+                    title: "Annuleren",
+                    onClick: () => this.setOpen(false),
+                  }}
+                styles={{width: "36vw"}}
                 />
             </div>
           );

@@ -22,6 +22,7 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<Spey
           //TODO: Use paneproperties?
           clientUrl: "https://v21-10-speyk.zportal.nl",
           token: "5laek7o5hr2ipv45qu4h2ml774",
+          //token: "k3btlqtrv686uivajd8lmiu2",
           student: "138888",
           week: null
         });

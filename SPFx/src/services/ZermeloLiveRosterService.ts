@@ -1,15 +1,9 @@
 import { ServiceKey } from "@microsoft/sp-core-library";
 import * as moment from "moment";
 import "moment/locale/nl";
-import { ZermeloEvents } from "../model/ZermeloEvent";
+import { AppointmentType, ZermeloEvent, ZermeloEvents, zermeloUrlParams } from "../model/ZermeloEvent";
 import { AppointmentsEntity, ZermeloRestLiveRosterResp } from "../model/ZermeloRestLIveRosterResp";
 
-export type zermeloUrlParams = {
-    clientUrl: string;
-    token: string; 
-    student: string; 
-    week: string;
-}; 
 
 const createZermeloUrl = (params: zermeloUrlParams): string => {
     return `${params.clientUrl}:443/api/v3/liveschedule?` +
@@ -19,54 +13,59 @@ const createZermeloUrl = (params: zermeloUrlParams): string => {
         `locations,teachers,cancelled,changeDescription,schedulerRemark,content,appointmentType`;
 };
 
-
 export class ZermeloLiveRosterService {
    
     private params: zermeloUrlParams;
 
     private zermeloToTeamsEvents(appointments: AppointmentsEntity[]): ZermeloEvents {
         let events: ZermeloEvents = [];
-        appointments.map((appointment) => {
-            if (appointment.appointmentType === "choice") {
-                events.push({
-                    "title": `${appointment.actions.length} keuzevakken`,
-                    "type": appointment.appointmentType,
-                    "choices": appointment.actions,
-                    "id": appointment.id,
-                    "start": new Date(appointment.start * 1000),
-                    "end": new Date(appointment.end * 1000),
-                    "subjects": appointment.subjects,
-                    "locations": appointment.locations,
-                    "teachers": appointment.teachers,
-                    "groups": appointment.groups}); 
-            } 
-            else if (appointment.appointmentType === "conflict") {
-                events.push({
-                    "title": `${appointment.actions.length} conflicten`,
-                    "type": appointment.appointmentType,
-                    "choices": appointment.actions,
-                    "id": appointment.id,
-                    "start": new Date(appointment.start * 1000),
-                    "end": new Date(appointment.end * 1000),
-                    "subjects": appointment.subjects,
-                    "locations": appointment.locations,
-                    "teachers": appointment.teachers,
-                    "groups": appointment.groups}); 
-            } 
-            else {
-                events.push({
+        appointments.forEach((appointment) => {
+            let baseEvent = {
                 "id": appointment.id,
                 "start": new Date(appointment.start * 1000),
                 "end": new Date(appointment.end * 1000),
                 "subjects": appointment.subjects,
                 "locations": appointment.locations,
                 "teachers": appointment.teachers,
-                "groups": appointment.groups}); 
+                "groups": appointment.groups,
+                "type": appointment.appointmentType,
+                "choices": appointment.actions,
+                "schedulerRemark": appointment.schedulerRemark,
+                "online": appointment.online
+            };
+            if (appointment.appointmentType === AppointmentType.CHOICE) {
+                let cntChoices: number = appointment.actions.filter((action) => {
+                   return action.status?.length == 0; 
+                }).length;
+                events.push({
+                    ...baseEvent,
+                    "title": `${cntChoices} keuzevakken`,
+                }); 
+            } 
+            else if (appointment.appointmentType === AppointmentType.CONFLICT) {
+                let cntChoices: number = appointment.actions.filter((action) => {
+                    return action.status?.length != 0;
+                }).length;
+                events.push({
+                    ...baseEvent,
+                    "title": `${cntChoices} conflicten`,
+                 }); 
+            } 
+            else if (appointment.appointmentType === AppointmentType.INTERLUDE) {
+                events.push({
+                    ...baseEvent,
+                    "title": `Tussenuur . ${appointment.locations[0]}`
+                }); 
+            }
+            else {
+                events.push({
+                    ...baseEvent
+                });
             }
         });
         return events;
     }
-    
+
     private async getEvents(week: string): Promise<ZermeloEvents> {
         try {
             const params: zermeloUrlParams = {
@@ -80,7 +79,8 @@ export class ZermeloLiveRosterService {
                     headers: new Headers({
                         "Authorization": `Bearer ${params.token}`, 
                         "User-Agent": "SPEYK Zermelo Teams App",
-                       // "X-Impersonate": "138888"
+                        "Content-Type": "text/json",
+                        //"X-Impersonate": "138888"
                 })
             });
 
@@ -106,11 +106,12 @@ export class ZermeloLiveRosterService {
    
     public async getEventsForWeeks(weeks: number) {
         try {
-            let events: ZermeloEvents = [];
+            let requests: Array<Promise<ZermeloEvents>> = [];
             for(let w = 0; w < 3; w++) {
-                events.push(...await this.getEvents(moment().year() + "" + moment().add(w, "w").week()));
+                requests.push(this.getEvents(moment().year() + "" + moment().add(w, "w").week()));
             }
-            return Promise.resolve(events);
+            let results = [].concat(...await Promise.all(requests));
+            return Promise.resolve(results);
         }
         catch (error) {
             return Promise.reject(error);

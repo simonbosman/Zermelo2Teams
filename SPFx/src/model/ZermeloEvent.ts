@@ -9,6 +9,22 @@ export interface ZermeloEvent extends Event {
     groups?: string[] | undefined;
     choices?: ActionsEntity[] | undefined;
     type?: string | undefined;
+    schedulerRemark?: string;
+    online?: boolean;
 }
 
 export type ZermeloEvents = ZermeloEvent[];
+
+export type zermeloUrlParams = {
+    clientUrl: string;
+    token: string; 
+    student: string; 
+    week: string;
+}; 
+
+export const AppointmentType =  {
+    INTERLUDE: "interlude",
+    CONFLICT: "conflict",
+    CHOICE: "choice",
+    LESSON: "lesson"
+};
