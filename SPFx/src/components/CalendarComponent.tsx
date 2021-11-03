@@ -27,13 +27,13 @@ export default class CalendarComponent extends React.Component<CalendarProps, Ca
 
     constructor(props: CalendarProps) {
         super(props);
-        this.handleEventSelected = this.handleEventSelected.bind(this);
         this.state = {
             isOpen: false,
             appointmentActions: [],
             startDate: new Date(moment.now()),
             endDate: new Date(moment.now())
         };
+        this.handleEventSelected = this.handleEventSelected.bind(this);
     }
     
     private handleEventSelected(event: ZermeloEvent, e: React.SyntheticEvent) {
