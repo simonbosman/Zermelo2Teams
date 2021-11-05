@@ -80,7 +80,7 @@ export class ZermeloLiveRosterService {
                         "Authorization": `Bearer ${params.token}`, 
                         "User-Agent": "SPEYK Zermelo Teams App",
                         "Content-Type": "text/json",
-                        //"X-Impersonate": "138888"
+                        "X-Impersonate": "138888"
                 })
             });
 

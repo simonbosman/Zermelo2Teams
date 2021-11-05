@@ -20,8 +20,10 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<Spey
         this.zermeloLiveRosterService = serviceScope.consume(ZermeloLiveRosterService.serviceKey);
         this.zermeloLiveRosterService.setZermelUrlParam({
           //TODO: Use paneproperties?
-          clientUrl: "https://v21-10-speyk.zportal.nl",
-          token: "5laek7o5hr2ipv45qu4h2ml774",
+          //clientUrl: "https://v21-10-speyk.zportal.nl",
+          clientUrl: "https://speyk-speyk.zportal.nl",
+          token: "ueoeg63t40b4s6k8sfdbd1lmmv",
+          //token: "5laek7o5hr2ipv45qu4h2ml774",
           //token: "k3btlqtrv686uivajd8lmiu2",
           student: "138888",
           week: null
