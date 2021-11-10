@@ -28,5 +28,4 @@ https://docs.microsoft.com/en-us/sharepoint/dev/spfx/integrate-with-teams-introd
 
 ## Architecture
 
-https://
-
+![Software architecture](/Software_architecture.drawio.png)
