@@ -36,10 +36,11 @@ export const EventDay: React.FunctionComponent<{event: ZermeloEvent, title: stri
     const { teachers } = eventComp.event;
     const { schedulerRemark } = eventComp.event;
     const { online } = eventComp.event;
+    const { onlineLocationUrl } = eventComp.event;
     let subjectsRender: string =  (subjects !== undefined) ? subjects.join().toUpperCase() : "";
     let locationsRender: string  = (locations !== undefined) ? locations.join() : "";
     let teachersRender: string = (teachers !== undefined) ? teachers.join() : "";
-    let isOnline = (online) ? "Hier komt de link naar de teams-meeting te staan." : "";
+    let isOnline = (online && onlineLocationUrl != null) ? onlineLocationUrl : "";
     
     if (subjectsRender == "PAUZE") {
         return (
@@ -67,11 +68,12 @@ export const EventWorkWeek: React.FunctionComponent<{event: ZermeloEvent, title:
     const { teachers } = eventComp.event;
     const { schedulerRemark } = eventComp.event;
     const { online } = eventComp.event;
+    const { onlineLocationUrl } = eventComp.event;
     let subjectsRender: string =  (subjects != null) ? subjects.join().toUpperCase() : "";
     let locationsRender: string  = (locations != null) ? locations.join() : "";
     let teachersRender: string = (teachers != null) ? teachers.join() : "";
     let isMoreContent = (schedulerRemark?.length > 0) ? <LightningIcon /> : "";
-    let isOnline = (online) ? <CallVideoIcon /> : "";
+    let isOnline = (online && onlineLocationUrl != null) ? <CallVideoIcon /> : "";
     
     if (subjectsRender == "PAUZE") {
         return (
