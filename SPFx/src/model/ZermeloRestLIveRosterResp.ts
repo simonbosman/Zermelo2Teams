@@ -26,6 +26,7 @@ export interface ZermeloRestLiveRosterResp {
     cancelled: boolean;
     appointmentType: string;
     online: boolean;
+    onlineLocationUrl?: string;
     optional: boolean;
     appointmentInstance?: number | null;
     startTimeSlotName?: string | null;

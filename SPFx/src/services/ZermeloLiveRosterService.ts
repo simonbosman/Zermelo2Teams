@@ -31,7 +31,8 @@ export class ZermeloLiveRosterService {
                 "type": appointment.appointmentType,
                 "choices": appointment.actions,
                 "schedulerRemark": appointment.schedulerRemark,
-                "online": appointment.online
+                "online": appointment.online,
+                "onlineLocationUrl": appointment.onlineLocationUrl
             };
             if (appointment.appointmentType === AppointmentType.CHOICE) {
                 let cntChoices: number = appointment.actions.filter((action) => {
@@ -107,7 +108,7 @@ export class ZermeloLiveRosterService {
     public async getEventsForWeeks(weeks: number) {
         try {
             let requests: Array<Promise<ZermeloEvents>> = [];
-            for(let w = 0; w < 3; w++) {
+            for(let w = 0; w < weeks; w++) {
                 requests.push(this.getEvents(moment().year() + "" + moment().add(w, "w").week()));
             }
             let results = [].concat(...await Promise.all(requests));

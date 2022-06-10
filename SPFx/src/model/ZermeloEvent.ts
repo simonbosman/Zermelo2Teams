@@ -11,6 +11,7 @@ export interface ZermeloEvent extends Event {
     type?: string | undefined;
     schedulerRemark?: string;
     online?: boolean;
+    onlineLocationUrl?: string;
 }
 
 export type ZermeloEvents = ZermeloEvent[];
