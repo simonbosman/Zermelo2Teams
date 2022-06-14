@@ -95,7 +95,7 @@ export const EventWorkWeek: React.FunctionComponent<{event: ZermeloEvent, title:
     }  
 };
   
-export const eventPropGetter = (event: ZermeloEvent, star: Date, end: Date, isSelected: boolean) => {
+export const eventPropGetter = (event: ZermeloEvent, start: Date, end: Date, isSelected: boolean) => {
     let bg: string; 
     switch(event.type) {
         case AppointmentType.CHOICE:

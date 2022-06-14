@@ -21,10 +21,16 @@ export default class App extends React.Component<AppProps, AppState> {
         super(props);
         this.state = {
             events: [],
-            isLoading: false
+            isLoading: false,
         };
+        this.handleActionChange = this.handleActionChange.bind(this);
     }
     
+    public async handleActionChange(action: string) {
+        const { zermeloLiveRosterService } = this.props;
+        await zermeloLiveRosterService.postAction(action);
+    }
+
     public componentDidMount() {
         this.getItems();
     }
@@ -36,7 +42,7 @@ export default class App extends React.Component<AppProps, AppState> {
             let events: ZermeloEvents = await zermeloLiveRosterService.getEventsForWeeks(3);
             this.setState({
                 isLoading: false,
-                events: events
+                events: events,
             });
           }
           catch(error) {
@@ -57,7 +63,7 @@ export default class App extends React.Component<AppProps, AppState> {
                 }
                 {   
                     events.length > 0 &&
-                    <CalendarComponent events={events} context={this.context}/>
+                    <CalendarComponent events={events} context={this.context} onActionChange={this.handleActionChange}/>
                 }
             </div>
             </Provider>

@@ -1,7 +1,8 @@
+import { RightSquareBracketKey } from "@fluentui/react-northstar";
 import { ServiceKey } from "@microsoft/sp-core-library";
 import * as moment from "moment";
 import "moment/locale/nl";
-import { AppointmentType, ZermeloEvent, ZermeloEvents, zermeloUrlParams } from "../model/ZermeloEvent";
+import { AppointmentType, ZermeloEvents, zermeloUrlParams } from "../model/ZermeloEvent";
 import { AppointmentsEntity, ZermeloRestLiveRosterResp } from "../model/ZermeloRestLIveRosterResp";
 
 
@@ -67,6 +68,33 @@ export class ZermeloLiveRosterService {
         return events;
     }
 
+    public async postAction(action: string): Promise<void> {
+        const { token } = this.params;
+        const url = this.params.clientUrl + action
+        try {
+            const response = await fetch(
+            url, {
+                method: "post", 
+                headers: new Headers({
+                    "Authorization": `Bearer ${token}`,
+                    "User-Agent": "SPEYK Zermelo Teams App",
+                    "Content-Type": "text/json",
+                    "X-Impersonate": "138888"
+                })
+            }
+        );
+        if (response.ok){
+            console.log("Post action succesfull: " + response.statusText);
+        }
+        else {
+            console.log("Error posting action: " + response.statusText);    
+        }
+        }
+        catch(error) {
+            console.log(error);
+        }
+    }
+
     private async getEvents(week: string): Promise<ZermeloEvents> {
         try {
             const params: zermeloUrlParams = {
@@ -104,7 +132,7 @@ export class ZermeloLiveRosterService {
     public setZermelUrlParam (params: zermeloUrlParams) {
         this.params = params;
     }
-   
+
     public async getEventsForWeeks(weeks: number) {
         try {
             let requests: Array<Promise<ZermeloEvents>> = [];

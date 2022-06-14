@@ -7,6 +7,7 @@ import { ZermeloEvent, ZermeloEvents } from "../model/ZermeloEvent";
 import { CloseIcon, Dialog, RadioGroup, RadioGroupItemProps, ShorthandCollection} from "@fluentui/react-northstar";
 import { ActionsEntity } from "../model/ZermeloRestLIveRosterResp";
 import { EventDay, eventPropGetter, EventWorkWeek, messages } from "./CalendarComponentHelpers";
+import * as strings from "SpeykTeamsZermeloWebPartStrings";
 
 const localizer = momentLocalizer(moment);
 
@@ -14,13 +15,15 @@ const localizer = momentLocalizer(moment);
 export type CalendarProps = {
     events: ZermeloEvents
     context: WebPartContext
+    onActionChange: (url: string) => void
 };
 
 export type CalendarStates = {
     isOpen: boolean,
     appointmentActions: ActionsEntity[],
     startDate: Date,
-    endDate: Date
+    endDate: Date,
+    action: string
 };
 
 export default class CalendarComponent extends React.Component<CalendarProps, CalendarStates> {
@@ -31,7 +34,8 @@ export default class CalendarComponent extends React.Component<CalendarProps, Ca
             isOpen: false,
             appointmentActions: [],
             startDate: new Date(moment.now()),
-            endDate: new Date(moment.now())
+            endDate: new Date(moment.now()),
+            action: ''
         };
         this.handleEventSelected = this.handleEventSelected.bind(this);
     }
@@ -54,6 +58,12 @@ export default class CalendarComponent extends React.Component<CalendarProps, Ca
         );
     }
 
+    private setAction(action: string) {
+        this.setState({
+            action: action
+        })
+    }
+
     private getAppChoicesDialog(appointmentActions: ActionsEntity[]): ShorthandCollection<RadioGroupItemProps> {
         let appointmentChoicesDialog = [];
         if (appointmentActions != null &&  appointmentActions.length > 0) {
@@ -70,7 +80,7 @@ export default class CalendarComponent extends React.Component<CalendarProps, Ca
                     {
                         disabled: isDisabled,
                         name: "enroll",
-                        value: action.appointment.id.toString(),
+                        value: action.post,
                         key: action.appointment.id,
                         label: `${action.appointment.subjects.join().toUpperCase()} . ` + 
                         `${action.appointment.locations.join()} . ${action.appointment.teachers.join()}  ` +
@@ -83,6 +93,7 @@ export default class CalendarComponent extends React.Component<CalendarProps, Ca
 
     public render(){
         const { events } = this.props;
+        const { onActionChange } = this.props;
         const { isOpen } = this.state;
         const { appointmentActions } = this.state;
         const { startDate } = this.state;
@@ -120,19 +131,30 @@ export default class CalendarComponent extends React.Component<CalendarProps, Ca
             <Dialog
                 open={isOpen}  
                 confirmButton="Inschrijven"
-                onConfirm={() => this.setOpen(false)} 
+                onConfirm={() => {
+                    if (this.state.action == '') {return;}
+                    onActionChange(this.state.action)
+                    this.setAction('')
+                    this.setOpen(false);
+                    }
+                } 
                 content={
                     <RadioGroup 
                         vertical 
-                        items={this.getAppChoicesDialog(appointmentActions)}/>
+                        items={this.getAppChoicesDialog(appointmentActions)}
+                        onCheckedValueChange={(e, props) =>
+                           this.setAction(String(props.value))
+                        }/>
                 }
                 header={headerDate}
                 headerAction={{
                     icon: <CloseIcon />,
                     title: "Annuleren",
-                    onClick: () => this.setOpen(false),
+                    onClick: () => {
+                        this.setAction('');
+                        this.setOpen(false);
+                    }
                   }}
-                styles={{width: "36vw"}}
                 />
             </div>
           );
