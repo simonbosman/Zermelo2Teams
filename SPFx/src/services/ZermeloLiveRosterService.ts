@@ -70,7 +70,7 @@ export class ZermeloLiveRosterService {
 
     public async postAction(action: string): Promise<void> {
         const { token } = this.params;
-        const url = this.params.clientUrl + action
+        const url = this.params.clientUrl + action;
         try {
             const response = await fetch(
             url, {

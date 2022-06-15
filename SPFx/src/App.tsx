@@ -24,12 +24,17 @@ export default class App extends React.Component<AppProps, AppState> {
             isLoading: false,
         };
         this.handleActionChange = this.handleActionChange.bind(this);
+        this.handleReload = this.handleReload.bind(this);
     }
     
     public async handleActionChange(action: string) {
-        const { zermeloLiveRosterService } = this.props;
+        const { zermeloLiveRosterService } = this.props;    
         await zermeloLiveRosterService.postAction(action);
     }
+
+    public async handleReload() {
+        setTimeout(() => {  this.getItems(); }, 1500);
+     }
 
     public componentDidMount() {
         this.getItems();
@@ -63,7 +68,7 @@ export default class App extends React.Component<AppProps, AppState> {
                 }
                 {   
                     events.length > 0 &&
-                    <CalendarComponent events={events} context={this.context} onActionChange={this.handleActionChange}/>
+                    <CalendarComponent events={events} context={this.context} onActionChange={this.handleActionChange} onReload={this.handleReload}/>
                 }
             </div>
             </Provider>

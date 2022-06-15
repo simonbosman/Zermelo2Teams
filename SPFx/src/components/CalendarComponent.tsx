@@ -16,6 +16,7 @@ export type CalendarProps = {
     events: ZermeloEvents
     context: WebPartContext
     onActionChange: (url: string) => void
+    onReload: () => void
 };
 
 export type CalendarStates = {
@@ -61,7 +62,7 @@ export default class CalendarComponent extends React.Component<CalendarProps, Ca
     private setAction(action: string) {
         this.setState({
             action: action
-        })
+        });
     }
 
     private getAppChoicesDialog(appointmentActions: ActionsEntity[]): ShorthandCollection<RadioGroupItemProps> {
@@ -76,16 +77,28 @@ export default class CalendarComponent extends React.Component<CalendarProps, Ca
                     statusMsg = "STATUS: " + action.status?.map(s => s.nl).join();
                 }
                
-                appointmentChoicesDialog.push(
-                    {
-                        disabled: isDisabled,
-                        name: "enroll",
-                        value: action.post,
-                        key: action.appointment.id,
-                        label: `${action.appointment.subjects.join().toUpperCase()} . ` + 
-                        `${action.appointment.locations.join()} . ${action.appointment.teachers.join()}  ` +
-                        `${statusMsg}`,
-                    });
+                if (action.appointment === null) {
+                    appointmentChoicesDialog.push(
+                        {
+                            disabled: false,
+                            name: "enroll",
+                            value: action.post,
+                            label: `${statusMsg}`
+                        }
+                    );
+                }
+                else {
+                  appointmentChoicesDialog.push(
+                        {
+                            disabled: isDisabled,
+                            name: "enroll",
+                            value: action.post,
+                            key: action.appointment.id,
+                            label: `${action.appointment.subjects.join().toUpperCase()} . ` + 
+                            `${action.appointment.locations.join()} . ${action.appointment.teachers.join()}  ` +
+                            `${statusMsg}`,
+                        });
+                }
             });
         }
         return appointmentChoicesDialog;
@@ -94,6 +107,7 @@ export default class CalendarComponent extends React.Component<CalendarProps, Ca
     public render(){
         const { events } = this.props;
         const { onActionChange } = this.props;
+        const { onReload } = this.props;
         const { isOpen } = this.state;
         const { appointmentActions } = this.state;
         const { startDate } = this.state;
@@ -133,9 +147,10 @@ export default class CalendarComponent extends React.Component<CalendarProps, Ca
                 confirmButton="Inschrijven"
                 onConfirm={() => {
                     if (this.state.action == '') {return;}
-                    onActionChange(this.state.action)
-                    this.setAction('')
+                    onActionChange(this.state.action);
+                    this.setAction('');
                     this.setOpen(false);
+                    onReload();
                     }
                 } 
                 content={
