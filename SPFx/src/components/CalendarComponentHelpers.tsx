@@ -114,6 +114,10 @@ export const eventPropGetter = (event: ZermeloEvent, start: Date, end: Date, isS
             break;
     }
     
+    if(event.choices.length > 0) {
+        bg = Colors.GREEN;
+    }
+
     let eventStyle = {
         background: bg,
         color: "black",

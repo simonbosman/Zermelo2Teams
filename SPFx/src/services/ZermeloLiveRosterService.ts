@@ -87,11 +87,11 @@ export class ZermeloLiveRosterService {
             console.log("Post action succesfull: " + response.statusText);
         }
         else {
-            console.log("Error posting action: " + response.statusText);    
+            console.error("Error posting action: " + response.statusText);    
         }
         }
         catch(error) {
-            console.log(error);
+            console.error(error);
         }
     }
 
