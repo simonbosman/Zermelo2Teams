@@ -145,7 +145,11 @@ export default class CalendarComponent extends React.Component<CalendarProps, Ca
                 open={isOpen}  
                 //TODO: Als er geen inschrijving mogelijk is, knop 
                 //inschrijven grayedout maken
-                confirmButton="Inschrijven"
+                confirmButton={{
+                    content: "Opslaan",
+                    title: "Opslaan",
+                    disabled: (this.state.action == '') ? true : false,
+                }}
                 onConfirm={() => {
                     if (this.state.action == '') {return;}
                     onActionChange(this.state.action);
