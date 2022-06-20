@@ -7,7 +7,6 @@ import { ZermeloEvent, ZermeloEvents } from "../model/ZermeloEvent";
 import { CloseIcon, Dialog, RadioGroup, RadioGroupItemProps, ShorthandCollection} from "@fluentui/react-northstar";
 import { ActionsEntity } from "../model/ZermeloRestLIveRosterResp";
 import { EventDay, eventPropGetter, EventWorkWeek, messages } from "./CalendarComponentHelpers";
-import * as strings from "SpeykTeamsZermeloWebPartStrings";
 
 const localizer = momentLocalizer(moment);
 
@@ -144,6 +143,8 @@ export default class CalendarComponent extends React.Component<CalendarProps, Ca
             />
             <Dialog
                 open={isOpen}  
+                //TODO: Als er geen inschrijving mogelijk is, knop 
+                //inschrijven grayedout maken
                 confirmButton="Inschrijven"
                 onConfirm={() => {
                     if (this.state.action == '') {return;}
