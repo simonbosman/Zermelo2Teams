@@ -4,6 +4,13 @@ import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import App, { AppProps } from "../../App";
 import { ServiceScope } from "@microsoft/sp-core-library";
 import { ZermeloLiveRosterService } from "../../services/ZermeloLiveRosterService";
+import * as strings from "SpeykTeamsZermeloWebPartStrings";
+
+import {
+  IPropertyPaneConfiguration,
+  PropertyPaneTextField,
+} from '@microsoft/sp-property-pane';
+
 
 type SpeykZermeloWebPartProps ={
   description: string;
@@ -19,12 +26,8 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<Spey
       serviceScope.whenFinished((): void => {
         this.zermeloLiveRosterService = serviceScope.consume(ZermeloLiveRosterService.serviceKey);
         this.zermeloLiveRosterService.setZermelUrlParam({
-          //TODO: Use paneproperties?
-          //clientUrl: "https://v21-10-speyk.zportal.nl",
           clientUrl: "https://speyk-speyk.zportal.nl",
           token: "ueoeg63t40b4s6k8sfdbd1lmmv",
-          //token: "5laek7o5hr2ipv45qu4h2ml774",
-          //token: "k3btlqtrv686uivajd8lmiu2",
           student: "138888",
           week: null
         });
@@ -40,5 +43,31 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<Spey
         context: this.context
       });
     ReactDom.render(app, this.domElement);
+  }
+
+  protected onDispose(): void {
+    ReactDom.unmountComponentAtNode(this.domElement);
+  }
+
+  protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
+    return {
+      pages: [
+        {
+          header: {
+            description: strings.PropertyPaneDescription
+          },
+          groups: [
+            {
+              groupName: strings.BasicGroupName,
+              groupFields: [
+                PropertyPaneTextField('description', {
+                  label: strings.DescriptionFieldLabel
+                })
+              ]
+            }
+          ]
+        }
+      ]
+    };
   }
 }

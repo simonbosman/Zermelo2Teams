@@ -31,12 +31,15 @@ const Colors = {
 };
 
 export const EventDay: React.FunctionComponent<{event: ZermeloEvent, title: string}> = eventComp => {
-    const { subjects } = eventComp.event;
-    const { locations } = eventComp.event;
-    const { teachers } = eventComp.event;
-    const { schedulerRemark } = eventComp.event;
-    const { online } = eventComp.event;
-    const { onlineLocationUrl } = eventComp.event;
+    const { 
+        subjects,
+        locations,
+        teachers,
+        schedulerRemark,
+        online,
+        onlineLocationUrl 
+    } = eventComp.event;
+
     let subjectsRender: string =  (subjects !== undefined) ? subjects.join().toUpperCase() : "";
     let locationsRender: string  = (locations !== undefined) ? locations.join() : "";
     let teachersRender: string = (teachers !== undefined) ? teachers.join() : "";
@@ -63,12 +66,15 @@ export const EventDay: React.FunctionComponent<{event: ZermeloEvent, title: stri
 };
 
 export const EventWorkWeek: React.FunctionComponent<{event: ZermeloEvent, title: string}> = eventComp => {
-    const { subjects } = eventComp.event;
-    const { locations } = eventComp.event;
-    const { teachers } = eventComp.event;
-    const { schedulerRemark } = eventComp.event;
-    const { online } = eventComp.event;
-    const { onlineLocationUrl } = eventComp.event;
+    const { 
+        subjects, 
+        locations,
+        teachers,
+        schedulerRemark,
+        online,
+        onlineLocationUrl 
+    } = eventComp.event;
+    
     let subjectsRender: string =  (subjects != null) ? subjects.join().toUpperCase() : "";
     let locationsRender: string  = (locations != null) ? locations.join() : "";
     let teachersRender: string = (teachers != null) ? teachers.join() : "";
