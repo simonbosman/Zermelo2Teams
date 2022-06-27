@@ -12,11 +12,12 @@ import {
 } from '@microsoft/sp-property-pane';
 
 
-type SpeykZermeloWebPartProps ={
-  description: string;
-};
+export interface ISpeykZermeloWebPartProps {
+  token: string;
+  zermeloUrl: string;
+}
 
-export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<SpeykZermeloWebPartProps> {
+export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpeykZermeloWebPartProps> {
  
   private zermeloLiveRosterService: ZermeloLiveRosterService;
  
@@ -26,8 +27,8 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<Spey
       serviceScope.whenFinished((): void => {
         this.zermeloLiveRosterService = serviceScope.consume(ZermeloLiveRosterService.serviceKey);
         this.zermeloLiveRosterService.setZermelUrlParam({
-          clientUrl: "https://speyk-speyk.zportal.nl",
-          token: "ueoeg63t40b4s6k8sfdbd1lmmv",
+          clientUrl: this.properties.zermeloUrl,
+          token: this.properties.token,
           student: "138888",
           week: null
         });
@@ -49,6 +50,33 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<Spey
     ReactDom.unmountComponentAtNode(this.domElement);
   }
 
+  private validateZermeloUrl(value: string) {
+    if (value === null ||
+      value.trim().length === 0) {
+      return 'Geef het REST API endpoint van Zermelo in';
+    }
+    
+    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+    
+    if (!pattern.test(value)) {
+      return 'Opgegeven REST API endpoint is geen geldige url';
+    }
+   
+    return '';
+  }
+
+  private validateToken(value: string) {
+    if (value === null ||
+      value.trim().length === 0) {
+        return 'Geef de REST API token van Zermelo in'
+      }
+  }
+
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
     return {
       pages: [
@@ -60,8 +88,13 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<Spey
             {
               groupName: strings.BasicGroupName,
               groupFields: [
-                PropertyPaneTextField('description', {
-                  label: strings.DescriptionFieldLabel
+                PropertyPaneTextField('zermeloUrl', {
+                  label: strings.ZermeloUrlFieldLabel,
+                  onGetErrorMessage: this.validateZermeloUrl.bind(this)
+                }),
+                PropertyPaneTextField('token', {
+                  label: strings.TokenFieldLabel,
+                  onGetErrorMessage: this.validateToken.bind(this)
                 })
               ]
             }

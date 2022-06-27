@@ -57,8 +57,7 @@ export default class App extends React.Component<AppProps, AppState> {
     }
 
     public render(): React.ReactElement<CalendarProps> {
-        const { events } = this.state;
-        const { isLoading } = this.state;
+        const { events, isLoading } = this.state;
         return(
             <Provider theme={teamsTheme}>
                <div>
