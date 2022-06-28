@@ -18,9 +18,39 @@ export interface ISpeykZermeloWebPartProps {
 }
 
 export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpeykZermeloWebPartProps> {
- 
+
   private zermeloLiveRosterService: ZermeloLiveRosterService;
- 
+  private validateZermeloUrl(value: string) {
+    if (value === null ||
+      value.trim().length === 0) {
+      return 'Geef het REST API endpoint van Zermelo in';
+    }
+
+    var pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+      '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+      '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+      '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+
+    if (!pattern.test(value)) {
+      return 'Opgegeven REST API endpoint is geen geldige url';
+    }
+    return "";
+  }
+
+  private validateToken(value: string) {
+    if (value === null ||
+      value.trim().length === 0) {
+      return 'Geef de REST API token van Zermelo in';
+    }
+    return "";
+  }
+
+  private getStudentEmail(): string {
+    return this.context.pageContext.user.email;
+  }
+
   public onInit(): Promise<void> {
     return new Promise<void>(async (resolve: () => void, reject: (error: any) => void): Promise<void> => {
       const serviceScope: ServiceScope = this.context.serviceScope.getParent();
@@ -29,52 +59,25 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpe
         this.zermeloLiveRosterService.setZermelUrlParam({
           clientUrl: this.properties.zermeloUrl,
           token: this.properties.token,
-          student: "138888",
+          student: this.getStudentEmail(),
           week: null
         });
       });
       resolve();
     });
   }
-  
+
   public render(): void {
     const app: React.ReactElement<AppProps> = React.createElement(
       App, {
-        zermeloLiveRosterService: this.zermeloLiveRosterService,
-        context: this.context
-      });
+      zermeloLiveRosterService: this.zermeloLiveRosterService,
+      context: this.context
+    });
     ReactDom.render(app, this.domElement);
   }
 
   protected onDispose(): void {
     ReactDom.unmountComponentAtNode(this.domElement);
-  }
-
-  private validateZermeloUrl(value: string) {
-    if (value === null ||
-      value.trim().length === 0) {
-      return 'Geef het REST API endpoint van Zermelo in';
-    }
-    
-    var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-      '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-      '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-      '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-      '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-      '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-    
-    if (!pattern.test(value)) {
-      return 'Opgegeven REST API endpoint is geen geldige url';
-    }
-   
-    return '';
-  }
-
-  private validateToken(value: string) {
-    if (value === null ||
-      value.trim().length === 0) {
-        return 'Geef de REST API token van Zermelo in'
-      }
   }
 
   protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {

@@ -15,7 +15,7 @@ const createZermeloUrl = (params: zermeloUrlParams): string => {
 };
 
 export class ZermeloLiveRosterService {
-   
+
     private params: zermeloUrlParams;
 
     private zermeloToTeamsEvents(appointments: AppointmentsEntity[]): ZermeloEvents {
@@ -37,13 +37,13 @@ export class ZermeloLiveRosterService {
             };
             if (appointment.appointmentType === AppointmentType.CHOICE) {
                 let cntChoices: number = appointment.actions.filter((action) => {
-                   return action.status?.length == 0; 
+                    return action.status?.length == 0;
                 }).length;
                 events.push({
                     ...baseEvent,
                     "title": `${cntChoices} keuzevakken`,
-                }); 
-            } 
+                });
+            }
             else if (appointment.appointmentType === AppointmentType.CONFLICT) {
                 let cntChoices: number = appointment.actions.filter((action) => {
                     return action.status?.length != 0;
@@ -51,13 +51,13 @@ export class ZermeloLiveRosterService {
                 events.push({
                     ...baseEvent,
                     "title": `${cntChoices} conflicten`,
-                 }); 
-            } 
+                });
+            }
             else if (appointment.appointmentType === AppointmentType.INTERLUDE) {
                 events.push({
                     ...baseEvent,
                     "title": `Tussenuur . ${appointment.locations[0]}`
-                }); 
+                });
             }
             else {
                 events.push({
@@ -68,48 +68,41 @@ export class ZermeloLiveRosterService {
         return events;
     }
 
-    public async postAction(action: string): Promise<void> {
-        const { token } = this.params;
-        const url = this.params.clientUrl + action;
+    private async getStudents(): Promise<any> {
+        const params: zermeloUrlParams = this.params;
         try {
-            const response = await fetch(
-            url, {
-                method: "post", 
-                headers: new Headers({
-                    "Authorization": `Bearer ${token}`,
-                    "User-Agent": "SPEYK Zermelo Teams App",
-                    "Content-Type": "text/json",
-                    "X-Impersonate": "138888"
-                })
+            const data: Response = await fetch(`${params.clientUrl}/api/v3/users?isStudent=true&fields=code,email`,
+                {
+                    method: "get",
+                    headers: new Headers({
+                        "Authorization": `Bearer ${params.token}`,
+                        "User-Agent": "SPEYK Zermelo Teams App",
+                        "Content-Type": "text/json",
+                    })
+                });
+            if (data.ok) {
+                const results: ZermeloRestLiveRosterResp = await data.json();
             }
-        );
-        if (response.ok){
-            console.log("Post action succesfull: " + response.statusText);
         }
-        else {
-            console.error("Error posting action: " + response.statusText);    
-        }
-        }
-        catch(error) {
-            console.error(error);
+        catch (error) {
+            return Promise.reject(error);
         }
     }
 
     private async getEvents(week: string): Promise<ZermeloEvents> {
+        const params: zermeloUrlParams = {
+            ...this.params,
+            week: week
+        }
         try {
-            const params: zermeloUrlParams = {
-                ...this.params,
-                week: week
-            };
-            
             const data: Response = await fetch(
-               createZermeloUrl(params), { 
-                    method: "get", 
-                    headers: new Headers({
-                        "Authorization": `Bearer ${params.token}`, 
-                        "User-Agent": "SPEYK Zermelo Teams App",
-                        "Content-Type": "text/json",
-                        "X-Impersonate": "138888"
+                createZermeloUrl(params), {
+                method: "get",
+                headers: new Headers({
+                    "Authorization": `Bearer ${params.token}`,
+                    "User-Agent": "SPEYK Zermelo Teams App",
+                    "Content-Type": "text/json",
+                    "X-Impersonate": "138888"
                 })
             });
 
@@ -121,22 +114,53 @@ export class ZermeloLiveRosterService {
                 }
             }
             return Promise.resolve([]);
-        } catch(error) {
+        } catch (error) {
             return Promise.reject(error);
-        }        
+        }
     }
-   
-    public static readonly serviceKey: ServiceKey<ZermeloLiveRosterService> = 
-    ServiceKey.create<ZermeloLiveRosterService>("App.ZermeloLiveRosterService", ZermeloLiveRosterService);
 
-    public setZermelUrlParam (params: zermeloUrlParams) {
+    public static readonly serviceKey: ServiceKey<ZermeloLiveRosterService> =
+        ServiceKey.create<ZermeloLiveRosterService>("App.ZermeloLiveRosterService", ZermeloLiveRosterService);
+
+    public setZermelUrlParam(params: zermeloUrlParams) {
+        //TODO: Create a function for retreiving a email, code map from Zermelo
+        //Put the result in a sharepoint list, when an entity isn't found do
+        //a new request
         this.params = params;
+        this.getStudents();
     }
 
+    public async postAction(action: string): Promise<void> {
+        const { token } = this.params;
+        const url = this.params.clientUrl + action;
+        try {
+            const response = await fetch(
+                url, {
+                method: "post",
+                headers: new Headers({
+                    "Authorization": `Bearer ${token}`,
+                    "User-Agent": "SPEYK Zermelo Teams App",
+                    "Content-Type": "text/json",
+                    "X-Impersonate": "138888"
+                })
+            }
+            );
+            if (response.ok) {
+                console.log("Post action succesfull: " + response.statusText);
+            }
+            else {
+                console.error("Error posting action: " + response.statusText);
+            }
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
+    
     public async getEventsForWeeks(weeks: number) {
         try {
             let requests: Array<Promise<ZermeloEvents>> = [];
-            for(let w = 0; w < weeks; w++) {
+            for (let w = 0; w < weeks; w++) {
                 requests.push(this.getEvents(moment().year() + "" + moment().add(w, "w").week()));
             }
             let results = [].concat(...await Promise.all(requests));
