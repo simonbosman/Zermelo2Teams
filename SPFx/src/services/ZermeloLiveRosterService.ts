@@ -1,9 +1,9 @@
-import { RightSquareBracketKey } from "@fluentui/react-northstar";
+import { RefForward, RightSquareBracketKey } from "@fluentui/react-northstar";
 import { ServiceKey } from "@microsoft/sp-core-library";
 import * as moment from "moment";
 import "moment/locale/nl";
 import { AppointmentType, ZermeloEvents, zermeloUrlParams } from "../model/ZermeloEvent";
-import { AppointmentsEntity, ZermeloRestLiveRosterResp } from "../model/ZermeloRestLIveRosterResp";
+import { AppointmentsEntity, DataEntity, Student, ZermeloRestLiveRosterResp } from "../model/ZermeloRestLIveRosterResp";
 
 
 const createZermeloUrl = (params: zermeloUrlParams): string => {
@@ -17,6 +17,7 @@ const createZermeloUrl = (params: zermeloUrlParams): string => {
 export class ZermeloLiveRosterService {
 
     private params: zermeloUrlParams;
+    private students: Student[];
 
     private zermeloToTeamsEvents(appointments: AppointmentsEntity[]): ZermeloEvents {
         let events: ZermeloEvents = [];
@@ -68,10 +69,11 @@ export class ZermeloLiveRosterService {
         return events;
     }
 
-    private async getStudents(): Promise<any> {
+    public async setStudents() {
         const params: zermeloUrlParams = this.params;
         try {
-            const data: Response = await fetch(`${params.clientUrl}/api/v3/users?isStudent=true&fields=code,email`,
+            const data: Response = await fetch(
+                `${params.clientUrl}/api/v3/users?isStudent=true&fields=email,code`,
                 {
                     method: "get",
                     headers: new Headers({
@@ -81,11 +83,21 @@ export class ZermeloLiveRosterService {
                     })
                 });
             if (data.ok) {
-                const results: ZermeloRestLiveRosterResp = await data.json();
+                const results: any = await data.json();
+                if (results.response.status == 200) {
+                    this.students = results.response.data;
+                    let student: string = this.students.filter((entity) => {
+                        return entity.email === params.student;
+                    })[0].code;
+                    this.params = {
+                        ...params,
+                        student: student
+                    }
+                }
             }
         }
         catch (error) {
-            return Promise.reject(error);
+            console.error(error);
         }
     }
 
@@ -93,7 +105,7 @@ export class ZermeloLiveRosterService {
         const params: zermeloUrlParams = {
             ...this.params,
             week: week
-        }
+        };
         try {
             const data: Response = await fetch(
                 createZermeloUrl(params), {
@@ -123,11 +135,7 @@ export class ZermeloLiveRosterService {
         ServiceKey.create<ZermeloLiveRosterService>("App.ZermeloLiveRosterService", ZermeloLiveRosterService);
 
     public setZermelUrlParam(params: zermeloUrlParams) {
-        //TODO: Create a function for retreiving a email, code map from Zermelo
-        //Put the result in a sharepoint list, when an entity isn't found do
-        //a new request
-        this.params = params;
-        this.getStudents();
+      this.params = params;
     }
 
     public async postAction(action: string): Promise<void> {

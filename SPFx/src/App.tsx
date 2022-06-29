@@ -36,7 +36,8 @@ export default class App extends React.Component<AppProps, AppState> {
         setTimeout(() => {  this.getItems(); }, 1500);
      }
 
-    public componentDidMount() {
+    public async componentDidMount() {
+        await this.props.zermeloLiveRosterService.setStudents();
         this.getItems();
     }
 

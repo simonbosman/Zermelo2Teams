@@ -55,6 +55,11 @@ export interface ZermeloRestLiveRosterResp {
     allowed: boolean;
     post: string;
   }
+  export interface Student {
+    email: string;
+    code: string;
+  }
+  
   export interface Appointment {
     start: number;
     end: number;
