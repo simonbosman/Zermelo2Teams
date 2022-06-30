@@ -4,6 +4,7 @@ import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import App, { AppProps } from "../../App";
 import { ServiceScope } from "@microsoft/sp-core-library";
 import { ZermeloLiveRosterService } from "../../services/ZermeloLiveRosterService";
+import { IStudentsListBackedService, StudentsListBackedService } from "../../services/StudentsListBackedService";
 import * as strings from "SpeykTeamsZermeloWebPartStrings";
 
 import {
@@ -20,6 +21,8 @@ export interface ISpeykZermeloWebPartProps {
 export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpeykZermeloWebPartProps> {
 
   private zermeloLiveRosterService: ZermeloLiveRosterService;
+  private studentsListBackedService: IStudentsListBackedService;
+
   private validateZermeloUrl(value: string) {
     if (value === null ||
       value.trim().length === 0) {
@@ -62,6 +65,7 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpe
           student: this.getStudentEmail(),
           week: null
         });
+        this.studentsListBackedService = serviceScope.consume(StudentsListBackedService.serviceKey);
       });
       resolve();
     });
@@ -71,6 +75,7 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpe
     const app: React.ReactElement<AppProps> = React.createElement(
       App, {
       zermeloLiveRosterService: this.zermeloLiveRosterService,
+      studentsListBackedService: this.studentsListBackedService,
       context: this.context
     });
     ReactDom.render(app, this.domElement);

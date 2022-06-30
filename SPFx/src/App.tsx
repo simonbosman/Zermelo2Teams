@@ -4,9 +4,11 @@ import { Provider, teamsTheme, Loader } from '@fluentui/react-northstar';
 import CalendarComponent, { CalendarProps } from './components/CalendarComponent';
 import { ZermeloEvents } from './model/ZermeloEvent';
 import { ZermeloLiveRosterService } from './services/ZermeloLiveRosterService';
+import { IStudentsListBackedService } from './services/StudentsListBackedService';
 
 export type AppProps = {
     zermeloLiveRosterService: ZermeloLiveRosterService;
+    studentsListBackedService: IStudentsListBackedService;
     context: WebPartContext;
 };
 
@@ -37,7 +39,9 @@ export default class App extends React.Component<AppProps, AppState> {
      }
 
     public async componentDidMount() {
-        await this.props.zermeloLiveRosterService.setStudents();
+        const { studentsListBackedService, zermeloLiveRosterService } = this.props;
+        let list = await studentsListBackedService.getLists();
+        await zermeloLiveRosterService.getStudents();
         this.getItems();
     }
 
