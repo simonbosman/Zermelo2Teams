@@ -4,7 +4,7 @@ import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import App, { AppProps } from "../../App";
 import { ServiceScope } from "@microsoft/sp-core-library";
 import { ZermeloLiveRosterService } from "../../services/ZermeloLiveRosterService";
-import { IStudentsListBackedService, StudentsListBackedService } from "../../services/StudentsListBackedService";
+import { StudentsListBackedService } from "../../services/StudentsListBackedService";
 import * as strings from "SpeykTeamsZermeloWebPartStrings";
 
 import {
@@ -16,13 +16,13 @@ import {
 export interface ISpeykZermeloWebPartProps {
   token: string;
   zermeloUrl: string;
+  spListUrl: string;
 }
 
 export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpeykZermeloWebPartProps> {
 
   private zermeloLiveRosterService: ZermeloLiveRosterService;
-  private studentsListBackedService: IStudentsListBackedService;
-
+  
   private validateZermeloUrl(value: string) {
     if (value === null ||
       value.trim().length === 0) {
@@ -49,6 +49,13 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpe
     }
     return "";
   }
+  
+  private validateListUrl(value: string) {
+    if (value === null ||
+      value.trim().length === 0) {
+      return 'Geef de url van de Students list in'
+      }
+  }
 
   private getStudentEmail(): string {
     return this.context.pageContext.user.email;
@@ -59,13 +66,12 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpe
       const serviceScope: ServiceScope = this.context.serviceScope.getParent();
       serviceScope.whenFinished((): void => {
         this.zermeloLiveRosterService = serviceScope.consume(ZermeloLiveRosterService.serviceKey);
-        this.zermeloLiveRosterService.setZermelUrlParam({
+        this.zermeloLiveRosterService.initZermeloLiveRosterService({
           clientUrl: this.properties.zermeloUrl,
           token: this.properties.token,
           student: this.getStudentEmail(),
           week: null
         });
-        this.studentsListBackedService = serviceScope.consume(StudentsListBackedService.serviceKey);
       });
       resolve();
     });
@@ -75,7 +81,6 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpe
     const app: React.ReactElement<AppProps> = React.createElement(
       App, {
       zermeloLiveRosterService: this.zermeloLiveRosterService,
-      studentsListBackedService: this.studentsListBackedService,
       context: this.context
     });
     ReactDom.render(app, this.domElement);
@@ -103,6 +108,10 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpe
                 PropertyPaneTextField('token', {
                   label: strings.TokenFieldLabel,
                   onGetErrorMessage: this.validateToken.bind(this)
+                }),
+                PropertyPaneTextField('spListUrl', {
+                  label: strings.SharepointListUrlLabel,
+                  onGetErrorMessage: this.validateListUrl.bind(this)
                 })
               ]
             }

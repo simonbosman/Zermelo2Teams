@@ -4,6 +4,7 @@ define([], (function () {
         BasicGroupName: "Zermelo",
         DescriptionFieldLabel: "Description",
         TokenFieldLabel: "Token",
-        ZermeloUrlFieldLabel: "REST API Zermelo"
+        ZermeloUrlFieldLabel: "REST API Zermelo",
+        SharepointListUrlLabel: "URL of needed Students list"
     }
 }));

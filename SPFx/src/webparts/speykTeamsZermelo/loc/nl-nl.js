@@ -4,6 +4,7 @@ define([],(function(){
         BasicGroupName:"Naam groep",
         DescriptionFieldLabel:"Beschrijving veld",
         TokenFieldLabel:"Token",
-        ZermeloUrlFieldLabel: "REST API Zermelo"
+        ZermeloUrlFieldLabel: "REST API Zermelo",
+        SharepointListUrlLabel: "URL van benodigde Students list"
      }
     }));
