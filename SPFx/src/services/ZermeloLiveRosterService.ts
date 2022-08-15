@@ -23,8 +23,7 @@ export class ZermeloLiveRosterService {
     constructor(serviceScope: ServiceScope) {
 
         serviceScope.whenFinished(() => {
-
-            this.studentsListBackedService = serviceScope.consume(StudentsListBackedService.serviceKey);
+           this.studentsListBackedService = serviceScope.consume(StudentsListBackedService.serviceKey)
         });
     }
 
@@ -173,6 +172,7 @@ export class ZermeloLiveRosterService {
 
     public initZermeloLiveRosterService(params: zermeloUrlParams) {
       this.params = params;
+      this.studentsListBackedService.initStudentsListBackedService(this.params.spInitPath);
     }
 
     public async postAction(action: string): Promise<void> {
@@ -208,9 +208,7 @@ export class ZermeloLiveRosterService {
             for (let w = 0; w < weeks; w++) {
                 requests.push(this.getEvents(moment().year() + "" + moment().add(w, "w").week()));
             }
-            //DIRTY HACK: because it's a holiday at Zermelo
-            //requests.push(this.getEvents("202224"));
-          
+            
             let results = [].concat(...await Promise.all(requests));
             return Promise.resolve(results);
         }

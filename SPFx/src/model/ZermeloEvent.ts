@@ -21,6 +21,7 @@ export type zermeloUrlParams = {
     token: string; 
     student: string; 
     week: string;
+    spInitPath: string;
 }; 
 
 export const AppointmentType =  {

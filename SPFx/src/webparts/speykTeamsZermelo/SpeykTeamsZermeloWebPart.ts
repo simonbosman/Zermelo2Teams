@@ -4,7 +4,6 @@ import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import App, { AppProps } from "../../App";
 import { ServiceScope } from "@microsoft/sp-core-library";
 import { ZermeloLiveRosterService } from "../../services/ZermeloLiveRosterService";
-import { StudentsListBackedService } from "../../services/StudentsListBackedService";
 import * as strings from "SpeykTeamsZermeloWebPartStrings";
 
 import {
@@ -70,7 +69,8 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpe
           clientUrl: this.properties.zermeloUrl,
           token: this.properties.token,
           student: this.getStudentEmail(),
-          week: null
+          week: null,
+          spInitPath: this.properties.spListUrl
         });
       });
       resolve();

@@ -15,7 +15,8 @@ import {
 } from "@pnp/logging";
 
 export interface IStudentsListBackedService {
-   getStudents(): Promise<any>
+   getStudents(): Promise<any>;
+   initStudentsListBackedService(spInitPath: string): void;
 }
 
 export interface IStudent {
@@ -27,18 +28,21 @@ export class StudentsListBackedService {
 
     public static readonly serviceKey: ServiceKey<IStudentsListBackedService> =
         ServiceKey.create<IStudentsListBackedService>('App:StudentsListBackedService', StudentsListBackedService);
-    private _sp: SPFI;
     private _web: IWeb;
+    private _spInitPath: string;
+    private _pageContext: PageContext;
     
     constructor(serviceScope: ServiceScope) {
 
         serviceScope.whenFinished(() => {
-
-            const pageContext = serviceScope.consume(PageContext.serviceKey);
-            this._sp = spfi().using(SPFx({ pageContext }));
-            //this._web = Web(pageContext.web.absoluteUrl).using(SPFx({ pageContext }));
-            this._web = Web("https://speykedu.sharepoint.com/sites/Digiplein365").using(SPFx({ pageContext }));
+            this._pageContext = serviceScope.consume(PageContext.serviceKey);
         });
+    }
+
+    public initStudentsListBackedService(spInitPath: string) {
+        this._spInitPath = spInitPath;
+        const pageContext  = this._pageContext;
+        this._web = Web(this._spInitPath).using(SPFx({ pageContext }));
     }
  
     public async getStudents(): Promise<any> {
