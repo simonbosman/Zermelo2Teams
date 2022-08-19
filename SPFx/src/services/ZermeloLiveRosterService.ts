@@ -1,4 +1,4 @@
-import { ServiceKey,Log, ServiceScope } from "@microsoft/sp-core-library";
+import { ServiceKey, Log, ServiceScope } from "@microsoft/sp-core-library";
 import * as moment from "moment";
 import "moment/locale/nl";
 import { AppointmentType, ZermeloEvents, zermeloUrlParams } from "../model/ZermeloEvent";
@@ -8,7 +8,7 @@ import { IStudentsListBackedService, StudentsListBackedService } from "./Student
 
 const createZermeloUrl = (params: zermeloUrlParams): string => {
     return `${params.clientUrl}:443/api/v3/liveschedule?` +
-        `student=${params.student}&` +
+        `student=${params.studentCode}&` +
         `week=${params.week}&` +
         `fields=appointmentInstance,start,end,startTimeSlotName,endTimeSlotName,subjects,groups,` +
         `locations,teachers,cancelled,changeDescription,schedulerRemark,content,appointmentType`;
@@ -23,7 +23,7 @@ export class ZermeloLiveRosterService {
     constructor(serviceScope: ServiceScope) {
 
         serviceScope.whenFinished(() => {
-           this.studentsListBackedService = serviceScope.consume(StudentsListBackedService.serviceKey)
+            this.studentsListBackedService = serviceScope.consume(StudentsListBackedService.serviceKey)
         });
     }
 
@@ -77,7 +77,7 @@ export class ZermeloLiveRosterService {
         return events;
     }
 
-    private async getStudentsFromZermelo() {
+    private async setStudentsFromZermelo() {
         const params: zermeloUrlParams = this.params;
         try {
             const data: Response = await fetch(
@@ -90,6 +90,7 @@ export class ZermeloLiveRosterService {
                         "Content-Type": "text/json"
                     })
                 });
+
             if (data.ok) {
                 const results: any = await data.json();
                 if (results.response.status == 200) {
@@ -101,42 +102,36 @@ export class ZermeloLiveRosterService {
         catch (error) {
             console.error(error);
         }
-   }
+    }
 
-    public async getStudents() {
-        let students = await this.studentsListBackedService.getStudents();
-        const params: zermeloUrlParams = this.params;
-        try {
-            const data: Response = await fetch(
-                `${params.clientUrl}/api/v3/users?isStudent=true&fields=email,code`,
-                {
-                    method: "get",
-                    headers: new Headers({
-                        "Authorization": `Bearer ${params.token}`,
-                        "User-Agent": "SPEYK Zermelo Teams App",
-                        "Content-Type": "text/json"
-                    })
-                });
-            if (data.ok) {
-                const results: any = await data.json();
-                if (results.response.status == 200) {
-                    this.students = results.response.data;
-                }
-                Log.info("ZermeloLiveRosterService", "Students haven been set");
+    private getStudentCode(students: Student[], email: string) {
+        let studentCodes = students.filter((entity) => {
+            return entity.email === email;
+        });
+        if (studentCodes.length > 0) {
+            return studentCodes[0].code;
+        }
+        else {
+            return "";
+        }
+    }
+
+    public async setStudent() {
+        this.students = await this.studentsListBackedService.getStudents();
+        let studentCode = this.getStudentCode(this.students, this.params.studentEmail);
+
+        if (studentCode.length > 0) {
+            this.params.studentCode = studentCode;
+        }
+        else {
+            await this.setStudentsFromZermelo();
+            let studentCode = this.getStudentCode(this.students, this.params.studentEmail);
+            if (studentCode.length > 0) {
+                this.studentsListBackedService.addStudent(studentCode, this.params.studentEmail)
+                this.params.studentCode = studentCode;
             }
         }
-        catch (error) {
-            console.error(error);
-        }
-
-        let student: string = this.students.filter((entity) => {
-            return entity.email === params.student;
-        })[0].code;
-        this.params = {
-            ...params,
-            student: student
-        };
-   }
+    }
 
     private async getEvents(week: string): Promise<ZermeloEvents> {
         const params: zermeloUrlParams = {
@@ -171,8 +166,8 @@ export class ZermeloLiveRosterService {
         ServiceKey.create<ZermeloLiveRosterService>("App.ZermeloLiveRosterService", ZermeloLiveRosterService);
 
     public initZermeloLiveRosterService(params: zermeloUrlParams) {
-      this.params = params;
-      this.studentsListBackedService.initStudentsListBackedService(this.params.spInitPath);
+        this.params = params;
+        this.studentsListBackedService.initStudentsListBackedService(this.params.spInitPath);
     }
 
     public async postAction(action: string): Promise<void> {
@@ -186,7 +181,7 @@ export class ZermeloLiveRosterService {
                     "Authorization": `Bearer ${token}`,
                     "User-Agent": "SPEYK Zermelo Teams App",
                     "Content-Type": "text/json",
-                    "X-Impersonate": this.params.student
+                    "X-Impersonate": this.params.studentCode
                 })
             }
             );
@@ -201,14 +196,14 @@ export class ZermeloLiveRosterService {
             console.error(error);
         }
     }
-    
+
     public async getEventsForWeeks(weeks: number) {
         try {
             let requests: Array<Promise<ZermeloEvents>> = [];
             for (let w = 0; w < weeks; w++) {
                 requests.push(this.getEvents(moment().year() + "" + moment().add(w, "w").week()));
             }
-            
+
             let results = [].concat(...await Promise.all(requests));
             return Promise.resolve(results);
         }

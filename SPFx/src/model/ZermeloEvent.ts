@@ -19,7 +19,8 @@ export type ZermeloEvents = ZermeloEvent[];
 export type zermeloUrlParams = {
     clientUrl: string;
     token: string; 
-    student: string; 
+    studentEmail: string;
+    studentCode: string; 
     week: string;
     spInitPath: string;
 }; 

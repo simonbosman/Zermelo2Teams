@@ -1,21 +1,19 @@
 
 import { ServiceKey, ServiceScope } from "@microsoft/sp-core-library";
 import { PageContext } from "@microsoft/sp-page-context";
-import { SPFI, spfi, SPFx } from "@pnp/sp";
+import { SPFI, SPFx, spfi } from "@pnp/sp";
 import { IWeb, Web } from "@pnp/sp/webs";
-import { IRenderListDataParameters } from "@pnp/sp/lists";
 import "@pnp/sp/webs";
 import "@pnp/sp/lists/web";
-import { IList } from "@pnp/sp/lists";
-import { gridRowBehavior, listItemBehavior, treeItemAsListItemBehavior } from "@fluentui/react-northstar";
 import { _GraphQueryable } from "@pnp/graph/graphqueryable";
-import {
-    Logger,
-    LogLevel
-} from "@pnp/logging";
+import "@pnp/sp/webs";
+import "@pnp/sp/lists";
+import "@pnp/sp/items";
+import { IItemAddResult } from "@pnp/sp/items";
 
 export interface IStudentsListBackedService {
    getStudents(): Promise<any>;
+   addStudent(code: string, email: string): Promise<void>;
    initStudentsListBackedService(spInitPath: string): void;
 }
 
@@ -28,6 +26,7 @@ export class StudentsListBackedService {
 
     public static readonly serviceKey: ServiceKey<IStudentsListBackedService> =
         ServiceKey.create<IStudentsListBackedService>('App:StudentsListBackedService', StudentsListBackedService);
+    private  _spfi: SPFI;
     private _web: IWeb;
     private _spInitPath: string;
     private _pageContext: PageContext;
@@ -39,10 +38,18 @@ export class StudentsListBackedService {
         });
     }
 
-    public initStudentsListBackedService(spInitPath: string) {
+    public async initStudentsListBackedService(spInitPath: string) {
         this._spInitPath = spInitPath;
         const pageContext  = this._pageContext;
+        this._spfi = spfi(this._spInitPath).using(SPFx ({ pageContext }));
         this._web = Web(this._spInitPath).using(SPFx({ pageContext }));
+    }
+
+    public async addStudent(code: string, email: string) {
+          const iar: IItemAddResult = await this._spfi.web.lists.getByTitle("Students").items.add({
+            code: code,
+            email: email
+        });
     }
  
     public async getStudents(): Promise<any> {
@@ -50,12 +57,12 @@ export class StudentsListBackedService {
         const ViewXml: string = "<View Scope=\"RecursiveAll\"></View>";
         const list = await this._web.lists.getByTitle("Students").renderListData(ViewXml);
         if (list.Row.length == 0) return students;
-        for (let i = list.FirstRow-1; i < list.LastRow; i++) {
+        
+        for (var i = list.FirstRow-1; i < list.LastRow; i++) {
             if ((list.Row[i].code !== undefined) && (list.Row[i].email !== undefined)){
-                let student: IStudent = { "code": list.Row[i].code, "email": list.Row[i].email };
-                students.push(student);
+                students.push({ "code": list.Row[i].code, "email": list.Row[i].email });
+            }
         }
         return students;
        }
     }
-}

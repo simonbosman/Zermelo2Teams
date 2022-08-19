@@ -61,14 +61,15 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpe
   }
 
   public onInit(): Promise<void> {
-    return new Promise<void>(async (resolve: () => void, reject: (error: any) => void): Promise<void> => {
+    return new Promise<void>( (resolve: () => void, reject: (error: any) => void) => {
       const serviceScope: ServiceScope = this.context.serviceScope.getParent();
-      serviceScope.whenFinished((): void => {
+      serviceScope.whenFinished(async (): Promise<void> => {
         this.zermeloLiveRosterService = serviceScope.consume(ZermeloLiveRosterService.serviceKey);
         this.zermeloLiveRosterService.initZermeloLiveRosterService({
           clientUrl: this.properties.zermeloUrl,
           token: this.properties.token,
-          student: this.getStudentEmail(),
+          studentEmail: this.getStudentEmail(),
+          studentCode: null,
           week: null,
           spInitPath: this.properties.spListUrl
         });

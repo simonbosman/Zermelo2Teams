@@ -38,14 +38,14 @@ export default class App extends React.Component<AppProps, AppState> {
 
     public async componentDidMount() {
         const { zermeloLiveRosterService } = this.props;
-        await zermeloLiveRosterService.getStudents();
-        this.getItems();
+        await this.getItems();
     }
 
     private async getItems(): Promise<void> {
         try {
             const { zermeloLiveRosterService } = this.props;
             this.setState({ isLoading: true} );
+            await zermeloLiveRosterService.setStudent();
             let events: ZermeloEvents = await zermeloLiveRosterService.getEventsForWeeks(3);
             this.setState({
                 isLoading: false,

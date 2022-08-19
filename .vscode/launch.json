@@ -2,6 +2,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "https://speykedu.sharepoint.com/_layouts/15/workbench.aspx",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
             "name": "Local workbench (Edge)",
             "type": "pwa-msedge",
             "request": "launch",
@@ -75,7 +82,7 @@
             "name": "Hosted workbench (Chrome)",
             "type": "pwa-chrome",
             "request": "launch",
-            "url": "https://enter-your-SharePoint-site/_layouts/workbench.aspx",
+            "url": "https://speykedu.sharepoint.com/_layouts/workbench.aspx",
             "webRoot": "${workspaceRoot}/SPFx",
             "sourceMaps": true,
             "sourceMapPathOverrides": {
