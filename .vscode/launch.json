@@ -1,5 +1,6 @@
 {
     "version": "0.2.0",
+    "runtimeVersion": "14", 
     "configurations": [
         {
             "name": "Launch Chrome",
@@ -33,7 +34,7 @@
         },
         {
             "name": "Local workbench (Chrome)",
-            "type": "pwa-chrome",
+            "type": "chrome",
             "request": "launch",
             "url": "https://localhost:5432/workbench",
             "webRoot": "${workspaceRoot}/SPFx",
@@ -47,7 +48,6 @@
             "runtimeArgs": [
                 "--remote-debugging-port=9222"
             ],
-            "preLaunchTask": "gulp serve",
             "postDebugTask": "Terminate All Tasks",
             "presentation": {
                 "group": "all",
@@ -80,7 +80,7 @@
         },
         {
             "name": "Hosted workbench (Chrome)",
-            "type": "pwa-chrome",
+            "type": "chrome",
             "request": "launch",
             "url": "https://speykedu.sharepoint.com/_layouts/workbench.aspx",
             "webRoot": "${workspaceRoot}/SPFx",
@@ -93,9 +93,7 @@
             },
             "runtimeArgs": [
                 "--remote-debugging-port=9222",
-                "-incognito"
             ],
-            "preLaunchTask": "gulp serve",
             "postDebugTask": "Terminate All Tasks",
             "presentation": {
                 "group": "remote",

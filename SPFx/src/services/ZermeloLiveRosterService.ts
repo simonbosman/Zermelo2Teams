@@ -48,10 +48,18 @@ export class ZermeloLiveRosterService {
                 let cntChoices: number = appointment.actions.filter((action) => {
                     return action.status?.length == 0;
                 }).length;
+                if (cntChoices === 0) {
+                    events.push({
+                        ...baseEvent,
+                        "title": "geen keuzevakken beschikbaar"
+                    })
+                }
+                else {
                 events.push({
                     ...baseEvent,
                     "title": `${cntChoices} keuzevakken`,
                 });
+            }
             }
             else if (appointment.appointmentType === AppointmentType.CONFLICT) {
                 let cntChoices: number = appointment.actions.filter((action) => {
@@ -145,7 +153,8 @@ export class ZermeloLiveRosterService {
                 headers: new Headers({
                     "Authorization": `Bearer ${params.token}`,
                     "User-Agent": "SPEYK Zermelo Teams App",
-                    "Content-Type": "text/json"
+                    "Content-Type": "text/json",
+                    "X-Impersonate": this.params.studentCode
                 })
             });
 
