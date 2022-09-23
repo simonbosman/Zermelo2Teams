@@ -4,14 +4,18 @@ import { Provider, teamsTheme, Loader } from '@fluentui/react-northstar';
 import CalendarComponent, { CalendarProps } from './components/CalendarComponent';
 import { ZermeloEvents } from './model/ZermeloEvent';
 import { ZermeloLiveRosterService } from './services/ZermeloLiveRosterService';
+import { SomTodayEvents } from './model/SomTodayEvent';
+import SomTodayService from './services/SomTodayService';
 
 export type AppProps = {
     zermeloLiveRosterService: ZermeloLiveRosterService;
+    somTodayService: SomTodayService;
     context: WebPartContext;
 };
 
 type AppState = {
-    events: ZermeloEvents;
+    //events: ZermeloEvents;
+    events: SomTodayEvents;
     isLoading: boolean;
 };
 
@@ -37,8 +41,7 @@ export default class App extends React.Component<AppProps, AppState> {
     }
 
     public async componentDidMount() {
-        const { zermeloLiveRosterService } = this.props;
-        await this.getItems();
+        await this.getItemsSomToday();
     }
 
     private async getItems(): Promise<void> {
@@ -58,6 +61,22 @@ export default class App extends React.Component<AppProps, AppState> {
         }
     }
 
+    private async getItemsSomToday(): Promise<void> {
+        try {
+            const { somTodayService } = this.props;
+            this.setState({ isLoading: true });
+            let events: SomTodayEvents = await somTodayService.fetchHomework();
+            this.setState ({
+                isLoading: false,
+                events: events,
+            });
+        }
+        catch (error) {
+            this.setState( { isLoading: false});
+            console.error(error);
+        }
+    }
+
     public render(): React.ReactElement<CalendarProps> {
         const { events, isLoading } = this.state;
         return (
@@ -65,7 +84,7 @@ export default class App extends React.Component<AppProps, AppState> {
                     <div>
                         {
                             isLoading &&
-                            <Loader label={{ content: "Rooster wordt opgehaald...", size: "large" }} size="larger" />
+                            <Loader label={{ content: "Huiswerk wordt opgehaald...", size: "large" }} size="larger" />
                         }
                         {
                             events.length > 0 &&

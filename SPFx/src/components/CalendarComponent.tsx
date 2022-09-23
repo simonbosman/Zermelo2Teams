@@ -7,12 +7,13 @@ import { ZermeloEvent, ZermeloEvents } from "../model/ZermeloEvent";
 import { CloseIcon, Dialog, RadioGroup, RadioGroupItemProps, ShorthandCollection } from "@fluentui/react-northstar";
 import { ActionsEntity } from "../model/ZermeloRestLIveRosterResp";
 import { EventDay, eventPropGetter, EventWorkWeek, messages } from "./CalendarComponentHelpers";
+import { SomTodayEvents } from "../model/SomTodayEvent";
 
 const localizer = momentLocalizer(moment);
 
 
 export type CalendarProps = {
-    events: ZermeloEvents
+    events: SomTodayEvents
     context: WebPartContext
     onActionChange: (url: string) => void
     onReload: () => void
@@ -129,7 +130,7 @@ export default class CalendarComponent extends React.Component<CalendarProps, Ca
                     defaultDate={new Date()}
                     events={events}
                     step={10}
-                    defaultView={Views.WORK_WEEK}
+                    defaultView={Views.DAY}
                     views={[Views.DAY, Views.WORK_WEEK]}
                     min={new Date(0, 0, 0, 8, 0, 0)}
                     max={new Date(0, 0, 0, 17, 0, 0)}

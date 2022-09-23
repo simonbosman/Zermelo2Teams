@@ -10,6 +10,7 @@ import {
   IPropertyPaneConfiguration,
   PropertyPaneTextField,
 } from '@microsoft/sp-property-pane';
+import SomTodayService from "../../services/SomTodayService";
 
 
 export interface ISpeykZermeloWebPartProps {
@@ -21,6 +22,7 @@ export interface ISpeykZermeloWebPartProps {
 export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpeykZermeloWebPartProps> {
 
   private zermeloLiveRosterService: ZermeloLiveRosterService;
+  private somTodayService: SomTodayService;
   
   private validateZermeloUrl(value: string) {
     if (value === null ||
@@ -73,6 +75,7 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpe
           week: null,
           spInitPath: this.properties.spListUrl
         });
+        this.somTodayService = serviceScope.consume(SomTodayService.serviceKey);
       });
       resolve();
     });
@@ -82,6 +85,7 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpe
     const app: React.ReactElement<AppProps> = React.createElement(
       App, {
       zermeloLiveRosterService: this.zermeloLiveRosterService,
+      somTodayService: this.somTodayService,
       context: this.context
     });
     ReactDom.render(app, this.domElement);

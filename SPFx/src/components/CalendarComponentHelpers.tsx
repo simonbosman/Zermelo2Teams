@@ -1,6 +1,7 @@
 import { CallVideoIcon, LightningIcon } from "@fluentui/react-icons-northstar";
 import * as React from "react";
 import { Messages } from "react-big-calendar";
+import { SomTodayEvent } from "../model/SomTodayEvent";
 import { AppointmentType, ZermeloEvent } from "../model/ZermeloEvent";
 
 export const messages: Messages = {
@@ -31,102 +32,42 @@ const Colors = {
     YELLOW: "linear-gradient(to right,#FFAA44 0,#FFAA44 4px,#F2E384 4px,#F2E384 100%)"
 };
 
-export const EventDay: React.FunctionComponent<{event: ZermeloEvent, title: string}> = eventComp => {
+export const EventDay: React.FunctionComponent<{event: SomTodayEvent, title: string}> = eventComp => {
     const { 
-        subjects,
-        locations,
-        teachers,
-        schedulerRemark,
-        online,
-        onlineLocationUrl 
+        onderwerp,
+        omschrijving,
+        notitie
     } = eventComp.event;
-
-    let subjectsRender: string =  (subjects !== undefined) ? subjects.join().toUpperCase() : "";
-    let locationsRender: string  = (locations !== undefined) ? locations.join() : "";
-    let teachersRender: string = (teachers !== undefined) ? teachers.join() : "";
-    let isOnline = (online && onlineLocationUrl != null) ? onlineLocationUrl : "";
     
-    if (subjectsRender == "PAUZE") {
-        return (
-            <span><strong>Pauze . {locations}</strong></span>
-        );
-    }
-    else if(eventComp.title != null) {
-       return (
-            <span><strong>{eventComp.title}</strong></span>
-        );
-    }
-    else { 
-        return (
-            <span>
-                <strong>{subjectsRender} . {locationsRender} . {teachersRender}</strong><br/><br/>
-                {schedulerRemark}{isOnline}
-            </span>
-        );
-    }
+    return (
+        <span>
+            <strong>{onderwerp} </strong><br/><br/>
+            {omschrijving} <br/>
+            {notitie}
+        </span>
+    );
 };
 
-export const EventWorkWeek: React.FunctionComponent<{event: ZermeloEvent, title: string}> = eventComp => {
+export const EventWorkWeek: React.FunctionComponent<{event: SomTodayEvent, title: string}> = eventComp => {
     const { 
-        subjects, 
-        locations,
-        teachers,
-        schedulerRemark,
-        online,
-        onlineLocationUrl 
+        onderwerp,
+        omschrijving,
+        notitie
     } = eventComp.event;
     
-    let subjectsRender: string =  (subjects != null) ? subjects.join().toUpperCase() : "";
-    let locationsRender: string  = (locations != null) ? locations.join() : "";
-    let teachersRender: string = (teachers != null) ? teachers.join() : "";
-    let isMoreContent = (schedulerRemark?.length > 0) ? <LightningIcon /> : "";
-    let isOnline = (online && onlineLocationUrl != null) ? <CallVideoIcon /> : "";
-    
-    if (subjectsRender == "PAUZE") {
-        return (
-            <span>{locations}</span>
-        );
-    }
-    else if(eventComp.title != null) {
-       return (
-            <span><strong>{eventComp.title}</strong></span>
-        );
-    }
-    else {
-        return (
-            <span>
-                <strong>{subjectsRender} <br/> {locationsRender} . {teachersRender}</strong><br/><br/>
-                {isMoreContent}{isOnline}
-            </span>
-        );
-    }  
+    return (
+        <span>
+            <strong>{onderwerp} </strong><br/><br/>
+            {omschrijving} <br/>
+            {notitie}
+        </span>
+    );
 };
   
 export const eventPropGetter = (event: ZermeloEvent, start: Date, end: Date, isSelected: boolean) => {
-    let bg: string; 
-    switch(event.type) {
-        case AppointmentType.CHOICE:
-            bg =  Colors.LIGHTGREY;
-            break;
-        case AppointmentType.CONFLICT:
-            bg = Colors.RED;
-            break;
-        case AppointmentType.INTERLUDE:
-            bg = (event.subjects[0] === "pauze") ? 
-            Colors.GREY : 
-            Colors.YELLOW;
-            break;
-        default:
-            bg = Colors.PURPLE;
-            break;
-    }
     
-    if ((event.choices.filter(choice => choice.allowed === true)).length > 0) {
-        bg = Colors.GREEN;
-    }
-
     let eventStyle = {
-        background: bg,
+        background: Colors.PURPLE,
         color: "black",
         border: "1px solid white",
         borderRadius: "4px",
