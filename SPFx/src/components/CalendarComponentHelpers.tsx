@@ -36,15 +36,36 @@ export const EventDay: React.FunctionComponent<{event: SomTodayEvent, title: str
     const { 
         onderwerp,
         omschrijving,
-        notitie
-    } = eventComp.event;
+        notitie,
+        huiswerktype,
+        vaknaam,
+        leerdoelen,
+        externMateriaal
+    }: SomTodayEvent = eventComp.event;
     
+    const notitieDocent = (notitie.length > 0) ? 
+        `<p><span style="color: #3F4D66">Notitie van de docent:</span>
+        ${notitie}</p>` : "";
+
+    const linkitemsTitle = (externMateriaal.length > 0) ? "<p><span style=\"color: #3F4D66\">Lesmateriaal:</span>" : "";
+    const linkItems = externMateriaal.map(item => 
+        `<li>${item.omschrijving} - <a href=${item.uri}>${item.uri}</a></li>` 
+    );
+
+    const text = `
+        <strong>${huiswerktype}<br/>
+        ${onderwerp} - <span style="color: #3F4D66">${vaknaam}</span>
+        <p><span style="color: #3F4D66"><strong>Leerdoelen:</strong></span>
+        ${leerdoelen}</p>
+        ${notitieDocent}
+        <p><span style="color: #3F4D66"><strong>Omschrijving:</strong></span>
+        ${omschrijving}
+        ${linkitemsTitle}
+        <ul>${linkItems}</ul>
+    `;
+
     return (
-        <span>
-            <strong>{onderwerp} </strong><br/><br/>
-            {omschrijving} <br/>
-            {notitie}
-        </span>
+        <div dangerouslySetInnerHTML={{__html: text}}></div>
     );
 };
 
@@ -52,15 +73,29 @@ export const EventWorkWeek: React.FunctionComponent<{event: SomTodayEvent, title
     const { 
         onderwerp,
         omschrijving,
-        notitie
-    } = eventComp.event;
+        notitie,
+        huiswerktype,
+        vaknaam,
+        leerdoelen,
+        externMateriaal
+    }: SomTodayEvent = eventComp.event;
     
+    const notitieDocent = (notitie.length > 0) ? 
+        `<p><span style="color: #3F4D66">Notitie van de docent:</span>
+        ${notitie}</p>` : "";
+
+    const linkitemsTitle = (externMateriaal.length > 0) ? "<p><span style=\"color: #3F4D66\">Lesmateriaal:</span>" : "";
+    const linkItems = externMateriaal.map(item => 
+        `<li>${item.omschrijving} - <a href=${item.uri}>${item.uri}</a></li>` 
+    );
+
+    const text = `
+        <strong>${huiswerktype}<br/>
+        ${onderwerp}<br/><span style="color: #3F4D66">${vaknaam}</span>
+    `;
+
     return (
-        <span>
-            <strong>{onderwerp} </strong><br/><br/>
-            {omschrijving} <br/>
-            {notitie}
-        </span>
+        <div dangerouslySetInnerHTML={{__html: text}}></div>
     );
 };
   

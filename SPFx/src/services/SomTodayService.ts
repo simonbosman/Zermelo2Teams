@@ -16,7 +16,11 @@ export default class SomTodayService {
                 "end": new Date(homework.einddatum),
                 "onderwerp": homework.onderwerp,
                 "omschrijving": homework.omschrijving,
-                "notitie": homework.notitie
+                "notitie": homework.notitie,
+                "huiswerktype": homework.huiswerktype,
+                "vaknaam": homework.vaknaam,
+                "leerdoelen": homework.leerdoelen,
+                "externMateriaal": homework.externMateriaal
             }
             events.push(baseEvent);
         })

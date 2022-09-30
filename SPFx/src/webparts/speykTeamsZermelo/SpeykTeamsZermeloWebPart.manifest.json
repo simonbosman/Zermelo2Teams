@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
-  "id": "8d789ecb-3747-428d-a11b-1ba3c80c338f",
+  "id": "2f55cb72-d826-45cb-a22c-8dea9747fd92",
   "alias": "SpeykTeamsZermeloWebPart",
   "componentType": "WebPart",
 

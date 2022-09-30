@@ -1,8 +1,8 @@
 {
     "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.11/MicrosoftTeams.schema.json",
     "manifestVersion": "1.11",
-    "packageName": "Zermelo2Teams",
-    "id": "dfe06596-f6c4-479a-a442-9e64cd4efb09",
+    "packageName": "SomToday2Teams",
+    "id": "5593f09e-68c4-4645-8579-949e2d68ab04",
     "version": "1.0.0",
     "developer": {
         "name": "SPEYK",
@@ -11,12 +11,12 @@
         "termsOfUseUrl": "https://www.microsoft.com/en-us/servicesagreement"
     },
     "name": {
-        "short": "Zermelo2Teams",
-        "full": "Zermelo rooster in Teams"
+        "short": "SomToday2Teams",
+        "full": "Huiswerk SomToday in Teams"
     },
     "description": {
-        "short": "Zermelo2Teams",
-        "full": "Zermelo rooster in Teams"
+        "short": "Somtoday2Teams",
+        "full": "Huiswerk SomToday in Teams"
     },
     "icons": {
         "outline": "resources/outline.png",
@@ -25,9 +25,9 @@
     "accentColor": "#004578",
     "staticTabs": [
         {
-            "entityId": "8d789ecb-3747-428d-a11b-1ba3c80c338f",
-            "name": "Zermelo2Teams",
-            "contentUrl": "https://{teamSiteDomain}/_layouts/15/TeamsLogon.aspx?SPFX=true&dest=/_layouts/15/teamshostedapp.aspx%3Fteams%26personal%26componentId=8d789ecb-3747-428d-a11b-1ba3c80c338f%26forceLocale={locale}",
+            "entityId": "2f55cb72-d826-45cb-a22c-8dea9747fd92",
+            "name": "SomToday2Teams",
+            "contentUrl": "https://{teamSiteDomain}/_layouts/15/TeamsLogon.aspx?SPFX=true&dest=/_layouts/15/teamshostedapp.aspx%3Fteams%26personal%26componentId=2f55cb72-d826-45cb-a22c-8dea9747fd92%26forceLocale={locale}",
             "websiteUrl": "https://products.office.com/en-us/sharepoint/collaboration",
             "scopes": [
                 "personal"
