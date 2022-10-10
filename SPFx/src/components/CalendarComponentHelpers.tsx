@@ -43,6 +43,10 @@ export const EventDay: React.FunctionComponent<{event: SomTodayEvent, title: str
         externMateriaal
     }: SomTodayEvent = eventComp.event;
     
+    const leerdoelenHuiswerk = (leerdoelen.length > 0) ?
+        `<p><span style="color: #3F4D66"><strong>Leerdoelen:</strong></span>
+        ${leerdoelen}</p>` : "";
+
     const notitieDocent = (notitie.length > 0) ? 
         `<p><span style="color: #3F4D66">Notitie van de docent:</span>
         ${notitie}</p>` : "";
@@ -53,10 +57,8 @@ export const EventDay: React.FunctionComponent<{event: SomTodayEvent, title: str
     );
 
     const text = `
-        <strong>${huiswerktype}<br/>
-        ${onderwerp} - <span style="color: #3F4D66">${vaknaam}</span>
-        <p><span style="color: #3F4D66"><strong>Leerdoelen:</strong></span>
-        ${leerdoelen}</p>
+        <strong>${huiswerktype} - ${onderwerp} - <span style="color: #3F4D66">${vaknaam}</span>
+        ${leerdoelenHuiswerk}
         ${notitieDocent}
         <p><span style="color: #3F4D66"><strong>Omschrijving:</strong></span>
         ${omschrijving}

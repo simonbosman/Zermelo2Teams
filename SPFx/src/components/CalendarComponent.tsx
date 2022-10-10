@@ -129,8 +129,8 @@ export default class CalendarComponent extends React.Component<CalendarProps, Ca
                     localizer={localizer}
                     defaultDate={new Date()}
                     events={events}
-                    step={10}
-                    defaultView={Views.DAY}
+                    step={5}
+                    defaultView={Views.WORK_WEEK}
                     views={[Views.DAY, Views.WORK_WEEK]}
                     min={new Date(0, 0, 0, 8, 0, 0)}
                     max={new Date(0, 0, 0, 17, 0, 0)}

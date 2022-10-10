@@ -10,10 +10,15 @@ export default class SomTodayService {
     private somTodayToTeamsEvents(homework: Homework[]): SomTodayEvents {
         let events: SomTodayEvents = [];
         homework.forEach( (homework) => {
+            let endDate = new Date(homework.begindatum);
+            const uren = endDate.getHours();
+            if (uren !== 0){
+                endDate.setMinutes(endDate.getMinutes() + 40);
+            }
             let baseEvent = {
                 "id": homework.huiswerkUUID,
                 "start": new Date(homework.begindatum),
-                "end": new Date(homework.einddatum),
+                "end": endDate,
                 "onderwerp": homework.onderwerp,
                 "omschrijving": homework.omschrijving,
                 "notitie": homework.notitie,
