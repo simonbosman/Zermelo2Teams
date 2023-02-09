@@ -210,7 +210,7 @@ export class ZermeloLiveRosterService {
         try {
             let requests: Array<Promise<ZermeloEvents>> = [];
             for (let w = 0; w < weeks; w++) {
-                requests.push(this.getEvents(moment().year() + "" + moment().add(w, "w").week()));
+                requests.push(this.getEvents(moment().year() + "" + moment().add(w, "w").format('ww')));
             }
 
             let results = [].concat(...await Promise.all(requests));

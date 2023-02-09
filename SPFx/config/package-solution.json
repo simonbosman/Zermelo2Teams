@@ -8,8 +8,8 @@
         "skipFeatureDeployment": true,
         "isDomainIsolated": false,
         "developer": {
-            "name": "",
-            "websiteUrl": "",
+            "name": "Simon Bosman",
+            "websiteUrl": "https://www.speyk.nl",
             "privacyUrl": "",
             "termsOfUseUrl": "",
             "mpnId": ""
