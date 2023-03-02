@@ -62,7 +62,7 @@ export default class App extends React.Component<AppProps, AppState> {
         const { events, isLoading } = this.state;
         return (
                 <Provider theme={teamsTheme}>
-                    <div>
+                    <div> 
                         {
                             isLoading &&
                             <Loader label={{ content: "Rooster wordt opgehaald...", size: "large" }} size="larger" />
