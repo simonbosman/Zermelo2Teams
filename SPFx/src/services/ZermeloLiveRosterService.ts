@@ -153,8 +153,7 @@ export class ZermeloLiveRosterService {
                 headers: new Headers({
                     "Authorization": `Bearer ${params.token}`,
                     "User-Agent": "SPEYK Zermelo Teams App",
-                    "Content-Type": "text/json",
-                    "X-Impersonate": this.params.studentCode
+                    "Content-Type": "text/json"
                 })
             });
 

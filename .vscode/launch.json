@@ -82,7 +82,7 @@
             "name": "Hosted workbench (Chrome)",
             "type": "chrome",
             "request": "launch",
-            "url": "https://speykedu.sharepoint.com/_layouts/workbench.aspx",
+            "url": "https://speykdev.sharepoint.com/_layouts/workbench.aspx",
             "webRoot": "${workspaceRoot}/SPFx",
             "sourceMaps": true,
             "sourceMapPathOverrides": {
