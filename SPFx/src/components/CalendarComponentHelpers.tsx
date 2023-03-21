@@ -129,9 +129,6 @@ export const EventWorkWeek: React.FunctionComponent<{
 
 export const eventPropGetter = (
 	event: ZermeloEvent,
-	start: Date,
-	end: Date,
-	isSelected: boolean
 ) => {
 	let bg: string;
 	switch (event.type) {
@@ -153,7 +150,7 @@ export const eventPropGetter = (
 	}
 
 	if (
-		event.choices.filter((choice) => choice.allowed === true)
+		event.choices.filter((choice) => choice.status.length == 0)
 			.length > 0
 	) {
 		bg = Colors.GREEN;

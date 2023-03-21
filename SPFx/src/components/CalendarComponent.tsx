@@ -52,11 +52,15 @@ export default class CalendarComponent extends React.Component<
 		this.handleEventSelected = this.handleEventSelected.bind(this);
 	}
 
-	private handleEventSelected(
-		event: ZermeloEvent,
-		e: React.SyntheticEvent
-	) {
-		if (event.choices == null || event.choices.length == 0) return;
+	private handleEventSelected(event: ZermeloEvent) {
+		if (
+			event.choices == null ||
+			event.choices.length == 0 ||
+			event.choices.filter(
+				(choice) => choice.status.length == 0
+			).length == 0
+		)
+			return;
 		this.setState({
 			appointmentActions: event.choices,
 			startDate: event.start,
