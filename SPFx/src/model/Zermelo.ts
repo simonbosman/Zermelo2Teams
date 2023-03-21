@@ -16,6 +16,15 @@ export interface ZermeloEvent extends Event {
 
 export type ZermeloEvents = ZermeloEvent[];
 
+export type zermeloUrlParams = {
+    clientUrl: string;
+    token: string; 
+    studentEmail: string;
+    studentCode: string; 
+    week: string;
+    spInitPath: string;
+}; 
+
 export const AppointmentType =  {
     INTERLUDE: "interlude",
     CONFLICT: "conflict",

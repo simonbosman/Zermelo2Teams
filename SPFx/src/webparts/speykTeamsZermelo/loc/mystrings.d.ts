@@ -1,10 +1,8 @@
 declare interface ISpeykTeamsZermeloWebPartStrings {
   PropertyPaneDescription: string;
   BasicGroupName: string;
-  DescriptionFieldLabel: string;
-  TokenFieldLabel: string;
-  ZermeloUrlFieldLabel: string;
-  SharepointListUrlLabel: string;
+  DisApiEndpointLabel: string;
+  DisSubscriptionKeyLabel: string;
 }
 
 declare module 'SpeykTeamsZermeloWebPartStrings' {

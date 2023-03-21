@@ -1,10 +1,8 @@
-define([],(function(){
-    return{
-        PropertyPaneDescription:"Beschrijving",
-        BasicGroupName:"Naam groep",
-        DescriptionFieldLabel:"Beschrijving veld",
-        TokenFieldLabel:"Token",
-        ZermeloUrlFieldLabel: "REST API Zermelo",
-        SharepointListUrlLabel: "URL van benodigde Students list"
-     }
-    }));
+define([], function () {
+	return {
+		PropertyPaneDescription: "Configureer hier de benodigde parameters",
+		BasicGroupName: "DIS APIM service",
+		DisApiEndpointLabel: "endpoint",
+		DisSubscriptionKeyLabel: "subscription key",
+	};
+});
