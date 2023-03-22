@@ -133,7 +133,10 @@ export default class CalendarComponent extends React.Component<
 		const { isOpen, appointmentActions, startDate, endDate } =
 			this.state;
 
-		let startTime: string = `${startDate.getHours()}:${startDate.getMinutes()}`;
+		let startTimeMin =
+			(startDate.getMinutes() < 10 ? "0" : "") +
+			startDate.getMinutes();
+		let startTime: string = `${startDate.getHours()}:${startTimeMin}`;
 		let endTime: string = `${endDate.getHours()}:${endDate.getMinutes()}`;
 		let options: Intl.DateTimeFormatOptions = {
 			weekday: "long",

@@ -1,6 +1,7 @@
 import { CallVideoIcon, LightningIcon } from "@fluentui/react-icons-northstar";
 import * as React from "react";
 import { Messages } from "react-big-calendar";
+import App from "../App";
 import { AppointmentType, ZermeloEvent } from "../model/ZermeloEvent";
 
 export const messages: Messages = {
@@ -127,9 +128,7 @@ export const EventWorkWeek: React.FunctionComponent<{
 	}
 };
 
-export const eventPropGetter = (
-	event: ZermeloEvent,
-) => {
+export const eventPropGetter = (event: ZermeloEvent) => {
 	let bg: string;
 	switch (event.type) {
 		case AppointmentType.CHOICE:
@@ -151,7 +150,8 @@ export const eventPropGetter = (
 
 	if (
 		event.choices.filter((choice) => choice.status.length == 0)
-			.length > 0
+			.length > 0 &&
+		event.type != AppointmentType.CONFLICT
 	) {
 		bg = Colors.GREEN;
 	}
