@@ -88,7 +88,10 @@ export class ZermeloLiveRosterService {
 		return events;
 	}
 
-	private async getEvents(week: string): Promise<ZermeloEvents> {
+	private async getEvents(
+		week: string,
+		token: string
+	): Promise<ZermeloEvents> {
 		const { disApiEndpoint, disSubscriptionKey } = {
 			...this.params,
 		};
@@ -98,7 +101,7 @@ export class ZermeloLiveRosterService {
 				{
 					method: "get",
 					headers: new Headers({
-						Authorization: `Bearer ${this.bearer}`,
+						Authorization: `Bearer ${token}`,
 						"Ocp-Apim-Subscription-Key":
 							disSubscriptionKey,
 						"Content-Type": "text/json",
@@ -136,14 +139,14 @@ export class ZermeloLiveRosterService {
 		this.params = params;
 	}
 
-	public async postAction(action: string): Promise<void> {
+	public async postAction(action: string, token: string): Promise<void> {
 		const { disApiEndpoint, disSubscriptionKey } = this.params;
 		const url = `${disApiEndpoint}/action${action}`;
 		try {
 			const response = await fetch(url, {
 				method: "post",
 				headers: new Headers({
-					Authorization: `Bearer ${this.bearer}`,
+					Authorization: `Bearer ${token}`,
 					"Ocp-Apim-Subscription-Key":
 						disSubscriptionKey,
 					"Content-Type": "text/json",
@@ -165,7 +168,7 @@ export class ZermeloLiveRosterService {
 		}
 	}
 
-	public async getEventsForWeeks(weeks: number) {
+	public async getEventsForWeeks(weeks: number, token: string) {
 		try {
 			let requests: Array<Promise<ZermeloEvents>> = [];
 			for (let w = 0; w < weeks; w++) {
@@ -175,7 +178,8 @@ export class ZermeloLiveRosterService {
 							"" +
 							moment()
 								.add(w, "w")
-								.format("ww")
+								.format("ww"),
+						token
 					)
 				);
 			}

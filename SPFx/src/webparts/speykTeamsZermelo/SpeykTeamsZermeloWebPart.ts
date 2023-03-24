@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDom from "react-dom";
 import { BaseClientSideWebPart } from "@microsoft/sp-webpart-base";
-import App, { AppProps } from "../../App";
+import TokenWrapper, { AppProps } from "../../App";
 import { ServiceScope } from "@microsoft/sp-core-library";
 import { ZermeloLiveRosterService } from "../../services/ZermeloLiveRosterService";
 import * as strings from "SpeykTeamsZermeloWebPartStrings";
@@ -32,7 +32,7 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpe
 				"(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
 				"(\\#[-a-z\\d_]*)?$",
 			"i"
-		); 
+		);
 
 		if (!pattern.test(value)) {
 			return "Opgegeven DIS API endpoint is geen geldige url.";
@@ -79,11 +79,10 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpe
 
 	public render(): void {
 		const app: React.ReactElement<AppProps> = React.createElement(
-			App,
+			TokenWrapper,
 			{
 				zermeloLiveRosterService:
 					this.zermeloLiveRosterService,
-				context: this.context,
 			}
 		);
 		ReactDom.render(app, this.domElement);
