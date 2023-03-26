@@ -13,14 +13,13 @@
   "preconfiguredEntries": [{
     "groupId": "5c03119e-3074-46fd-976b-c60198311f70", 
     "group": { "default": "Other" },
-    "title": { "default": "Zermelo-Rooster" },
+    "title": { "default": "Zermelo-rooster" },
     "description": { "default": "Zermelo rooster in teams" },
     "officeFabricIconFontName": "Page",
     "properties": {
       "description": "Zermelo rooster in teams",
-      "zermeloUrl": "https://klant-speyk.zportal.nl",
-      "token": "ldv1sfaftgol8b5ngs1m8hoehb",
-      "spListUrl": "https://speykedu.sharepoint.com/sites/Digiplein365"
+      "disApiEndpoint": "https://dis.azure-api.net/liveschedule/dev",
+      "disSubscriptionKey": "462c50ce7f264294ad028cf847e0de54"
     }
   }]
 }

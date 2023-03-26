@@ -9,6 +9,10 @@
     "test": "gulp test"
   },
   "dependencies": {
+    "@auth0/auth0-react": "1.10.2",
+    "@azure/msal-browser": "^2.34.0",
+    "@azure/msal-common": "^11.0.0",
+    "@azure/msal-react": "^1.5.4",
     "@fluentui/react-northstar": "^0.59.0",
     "@microsoft/rush-stack-compiler-4.2": "^0.1.2",
     "@microsoft/sp-core-library": "1.12.1",
@@ -19,7 +23,6 @@
     "@pnp/graph": "^3.4.1",
     "@pnp/logging": "^3.4.1",
     "@pnp/sp": "^3.4.1",
-    "@auth0/auth0-react": "1.10.2",
     "moment": "^2.29.1",
     "react": "16.11.0",
     "react-big-calendar": "^0.36.0",
