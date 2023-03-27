@@ -51,6 +51,7 @@ class App extends React.Component<AppProps, AppState> {
 	static contextType = MsalContext;
 	private token: string;
 	private eventStatus: EventStatus = EventStatus.None;
+	private showPopup: boolean = false;
 
 	constructor(props: AppProps) {
 		super(props);
@@ -80,12 +81,15 @@ class App extends React.Component<AppProps, AppState> {
 		const isAuthenticated = this.context.accounts.length > 0;
 		if (
 			!isAuthenticated &&
-			this.context.inProgress === InteractionStatus.None
+			this.context.inProgress === InteractionStatus.None &&
+			this.showPopup == false
 		) {
+			this.showPopup = true;
 			await msalInst
 				.loginPopup()
 				.then((authRes: AuthenticationResult) => {
 					this.token = authRes.accessToken;
+					this.showPopup = false;
 				})
 				.catch((error) => console.error(error));
 		} else if (this.context.inProgress === InteractionStatus.None) {
