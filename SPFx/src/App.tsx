@@ -1,4 +1,3 @@
-import { WebPartContext } from "@microsoft/sp-webpart-base";
 import * as React from "react";
 import { Provider, teamsTheme, Loader } from "@fluentui/react-northstar";
 import {
@@ -67,7 +66,7 @@ class App extends React.Component<AppProps, AppState> {
 		const { zermeloLiveRosterService } = this.props;
 		this.eventStatus = EventStatus.Posting;
 		await zermeloLiveRosterService.postAction(action, this.token);
-		this.eventStatus = EventStatus.None
+		this.eventStatus = EventStatus.None;
 	}
 
 	public async handleReload() {
@@ -83,7 +82,8 @@ class App extends React.Component<AppProps, AppState> {
 			!isAuthenticated &&
 			this.context.inProgress === InteractionStatus.None
 		) {
-			msalInst.loginPopup()
+			await msalInst
+				.loginPopup()
 				.then((authRes: AuthenticationResult) => {
 					this.token = authRes.accessToken;
 				})
