@@ -1,25 +1,31 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
-  "id": "8d789ecb-3747-428d-a11b-1ba3c80c338f",
-  "alias": "SpeykTeamsZermeloWebPart",
-  "componentType": "WebPart",
+	"$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
+	"id": "8d789ecb-3747-428d-a11b-1ba3c80c338f",
+	"alias": "SpeykTeamsZermeloWebPart",
+	"componentType": "WebPart",
 
-  "version": "*",
-  "manifestVersion": 2,
+	"version": "*",
+	"manifestVersion": 2,
 
-  "requiresCustomScript": false,
-  "supportedHosts": ["SharePointWebPart", "TeamsTab", "TeamsPersonalApp"],
+	"requiresCustomScript": false,
+	"supportedHosts": ["SharePointWebPart", "TeamsTab", "TeamsPersonalApp"],
 
-  "preconfiguredEntries": [{
-    "groupId": "5c03119e-3074-46fd-976b-c60198311f70", 
-    "group": { "default": "Other" },
-    "title": { "default": "Zermelo-rooster" },
-    "description": { "default": "Zermelo rooster in teams" },
-    "officeFabricIconFontName": "Page",
-    "properties": {
-      "description": "Zermelo rooster in teams",
-      "disApiEndpoint": "https://dis.azure-api.net/liveschedule/dev",
-      "disSubscriptionKey": "462c50ce7f264294ad028cf847e0de54"
-    }
-  }]
+	"preconfiguredEntries": [
+		{
+			"groupId": "5c03119e-3074-46fd-976b-c60198311f70",
+			"group": { "default": "Other" },
+			"title": { "default": "Zermelo-rooster" },
+			"description": {
+				"default": "Zermelo rooster in teams"
+			},
+			"officeFabricIconFontName": "Page",
+			"properties": {
+				"description": "Zermelo rooster in teams",
+				"disApiEndpoint": "https://dis.azure-api.net/liveschedule/dev",
+				"disSubscriptionKey": "462c50ce7f264294ad028cf847e0de54",
+				"azureTenantId": "d71896c5-795f-424e-bfb5-558dd1f95bb1",
+				"azureApplicationId": "c8b799ec-a2f9-4dbe-9389-af0c03de37b9"
+			}
+		}
+	]
 }

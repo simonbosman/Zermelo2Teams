@@ -1,6 +1,6 @@
 
 export type DisApiParams = {
     disApiEndpoint: string;
-    disSubscriptionKey: string; 
+    disSubscriptionKey: string;
 }; 
 

@@ -15,6 +15,8 @@ import { msalConfig } from "./AuthConfig";
 
 export type AppProps = {
 	zermeloLiveRosterService: ZermeloLiveRosterService;
+	azureTenantId: string;
+	azureAppId: string;
 };
 
 type AppState = {
@@ -31,16 +33,14 @@ enum EventStatus {
 
 export default class TokenWrapper extends React.Component<AppProps> {
 	render() {
-		const { zermeloLiveRosterService } = this.props;
-		const msalInstance = new PublicClientApplication(msalConfig);
+		const { azureTenantId, azureAppId } = this.props;
+		const msalInstance = new PublicClientApplication(
+			msalConfig(azureTenantId, azureAppId)
+		);
 		return (
 			<React.StrictMode>
 				<MsalProvider instance={msalInstance}>
-					<App
-						zermeloLiveRosterService={
-							zermeloLiveRosterService
-						}
-					/>
+					<App {...this.props} />
 				</MsalProvider>
 			</React.StrictMode>
 		);

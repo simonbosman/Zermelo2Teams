@@ -14,6 +14,8 @@ import {
 export interface ISpeykZermeloWebPartProps {
 	disApiEndpoint: string;
 	disSubscriptionKey: string;
+	azureTenantId: string;
+	azureApplicationId: string;
 }
 
 export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpeykZermeloWebPartProps> {
@@ -43,6 +45,18 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpe
 	private validateSubscriptionKey(value: string) {
 		if (value === null || value.trim().length === 0) {
 			return "Geef de DIS subscription key in.";
+		}
+		return "";
+	}
+
+	private validateGuid(value: string) {
+		if (value == null || value.trim().length === 0) {
+			return "Geef de tenant en het application id in.";
+		}
+		const re =
+			/^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+		if (!re.test(value)) {
+			return "Opgegeven tenant en/of application id is geen geldige GUID.;";
 		}
 		return "";
 	}
@@ -83,6 +97,8 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpe
 			{
 				zermeloLiveRosterService:
 					this.zermeloLiveRosterService,
+				azureTenantId: this.properties.azureTenantId,
+				azureAppId: this.properties.azureApplicationId,
 			}
 		);
 		ReactDom.render(app, this.domElement);
@@ -120,6 +136,26 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpe
 										label: strings.DisSubscriptionKeyLabel,
 										onGetErrorMessage:
 											this.validateSubscriptionKey.bind(
+												this
+											),
+									}
+								),
+								PropertyPaneTextField(
+									"azureTenantId",
+									{
+										label: strings.AzureTenantIdLabel,
+										onGetErrorMessage:
+											this.validateGuid.bind(
+												this
+											),
+									}
+								),
+								PropertyPaneTextField(
+									"azureApplicationId",
+									{
+										label: strings.AzureAppIdLabel,
+										onGetErrorMessage:
+											this.validateGuid.bind(
 												this
 											),
 									}
