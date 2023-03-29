@@ -9,9 +9,6 @@ import {
 } from "../model/ZermeloRestLIveRosterResp";
 
 export class ZermeloLiveRosterService {
-	private bearer = localStorage.getItem(
-		"adal.access.token.keyhttps://outlook.office.com"
-	);
 	private params: DisApiParams;
 
 	private zermeloToTeamsEvents(
@@ -41,8 +38,9 @@ export class ZermeloLiveRosterService {
 				let cntChoices: number =
 					appointment.actions.filter((action) => {
 						return (
-							action.status?.length ==
-							0
+							action.appointment
+								.allowedActions !==
+							"none"
 						);
 					}).length;
 				if (cntChoices === 0) {

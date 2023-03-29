@@ -57,8 +57,11 @@ export default class CalendarComponent extends React.Component<
 			event.choices == null ||
 			event.choices.length == 0 ||
 			event.choices.filter(
-				(choice) => choice.status.length == 0
-			).length == 0
+				(choice) =>
+					choice.appointment.allowedActions !==
+					"none"
+			).length <= 1 ||
+			event.type === "conflict"
 		)
 			return;
 		this.setState({
@@ -91,15 +94,16 @@ export default class CalendarComponent extends React.Component<
 		) {
 			appointmentActions.forEach((action) => {
 				let isDisabled: boolean = false;
-				let statusMsg: string = "";
+				let statusMsg: string =
+					" - " +
+					action.status?.map((s) => s.nl).join();
 
-				if (action.status?.length > 0) {
+				if (
+					action.appointment.allowedActions ===
+					"none"
+				) {
+					statusMsg = "";
 					isDisabled = true;
-					statusMsg =
-						"STATUS: " +
-						action.status
-							?.map((s) => s.nl)
-							.join();
 				}
 
 				if (action.appointment === null) {

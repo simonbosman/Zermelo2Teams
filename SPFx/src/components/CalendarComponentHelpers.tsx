@@ -149,8 +149,9 @@ export const eventPropGetter = (event: ZermeloEvent) => {
 	}
 
 	if (
-		event.choices.filter((choice) => choice.status.length == 0)
-			.length > 0 &&
+		event.choices.filter(
+			(choice) => choice.appointment.allowedActions !== "none"
+		).length > 1 &&
 		event.type != AppointmentType.CONFLICT
 	) {
 		bg = Colors.GREEN;
