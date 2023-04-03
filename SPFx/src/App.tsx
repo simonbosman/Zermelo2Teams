@@ -17,6 +17,7 @@ export type AppProps = {
 	zermeloLiveRosterService: ZermeloLiveRosterService;
 	azureTenantId: string;
 	azureAppId: string;
+	token: string;
 };
 
 type AppState = {
@@ -49,9 +50,9 @@ export default class TokenWrapper extends React.Component<AppProps> {
 
 class App extends React.Component<AppProps, AppState> {
 	static contextType = MsalContext;
-	private token: string;
 	private eventStatus: EventStatus = EventStatus.None;
 	private showPopup: boolean = false;
+	private token: String
 
 	constructor(props: AppProps) {
 		super(props);
@@ -64,9 +65,9 @@ class App extends React.Component<AppProps, AppState> {
 	}
 
 	public async handleActionChange(action: string) {
-		const { zermeloLiveRosterService } = this.props;
+		const { zermeloLiveRosterService, token } = this.props;
 		this.eventStatus = EventStatus.Posting;
-		await zermeloLiveRosterService.postAction(action, this.token);
+		await zermeloLiveRosterService.postAction(action, token);
 		this.eventStatus = EventStatus.None;
 	}
 
@@ -107,11 +108,13 @@ class App extends React.Component<AppProps, AppState> {
 	}
 
 	public async componentDidMount() {
-		await this.callLogin();
+		//await this.callLogin();
+		this.getItems();
+
 	}
 
 	public async componentDidUpdate() {
-		await this.callLogin();
+		//await this.callLogin();
 	}
 
 	private async getItems(): Promise<void> {
@@ -120,12 +123,12 @@ class App extends React.Component<AppProps, AppState> {
 		}
 
 		try {
-			const { zermeloLiveRosterService } = this.props;
+			const { zermeloLiveRosterService, token } = this.props;
 			this.eventStatus = EventStatus.Fetching;
 			let events: ZermeloEvents =
 				await zermeloLiveRosterService.getEventsForWeeks(
 					3,
-					this.token
+					token
 				);
 			this.setState({
 				isLoading: false,
