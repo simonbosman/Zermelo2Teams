@@ -5,7 +5,7 @@ import TokenWrapper, { AppProps } from "../../App";
 import { ServiceScope } from "@microsoft/sp-core-library";
 import { ZermeloLiveRosterService } from "../../services/ZermeloLiveRosterService";
 import * as strings from "SpeykTeamsZermeloWebPartStrings";
-import { AadTokenProvider, AadTokenProviderFactory } from "@microsoft/sp-http";
+
 import {
 	IPropertyPaneConfiguration,
 	PropertyPaneTextField,
@@ -61,15 +61,6 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpe
 		return "";
 	}
 
-	private async getToken(): Promise<string> {
-		const aadTokenProvider: AadTokenProvider =
-			await this.context.aadTokenProviderFactory.getTokenProvider();
-		return await aadTokenProvider.getToken(
-			"https://graph.microsoft.com",
-			false
-		);
-	}
-
 	public onInit(): Promise<void> {
 		return new Promise<void>(
 			(resolve: () => void, reject: (error: any) => void) => {
@@ -101,19 +92,16 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpe
 	}
 
 	public render(): void {
-		this.getToken().then((token) => {
-			const app: React.ReactElement<AppProps> =
-				React.createElement(TokenWrapper, {
-					zermeloLiveRosterService:
-						this.zermeloLiveRosterService,
-					azureTenantId:
-						this.properties.azureTenantId,
-					azureAppId: this.properties
-						.azureApplicationId,
-					token: token,
-				});
-			ReactDom.render(app, this.domElement);
-		});
+		const app: React.ReactElement<AppProps> = React.createElement(
+			TokenWrapper,
+			{
+				zermeloLiveRosterService:
+					this.zermeloLiveRosterService,
+				azureTenantId: this.properties.azureTenantId,
+				azureAppId: this.properties.azureApplicationId,
+			}
+		);
+		ReactDom.render(app, this.domElement);
 	}
 
 	protected onDispose(): void {
