@@ -99,6 +99,8 @@ export default class SpeykTeamsZermeloWebPart extends BaseClientSideWebPart<ISpe
 					this.zermeloLiveRosterService,
 				azureTenantId: this.properties.azureTenantId,
 				azureAppId: this.properties.azureApplicationId,
+				microsoftTeams:
+					this.context.sdks.microsoftTeams,
 			}
 		);
 		ReactDom.render(app, this.domElement);

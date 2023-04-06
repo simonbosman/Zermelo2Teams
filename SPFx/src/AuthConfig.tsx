@@ -3,10 +3,10 @@ export const msalConfig = (tenantId: string, appId: string) => {
 		auth: {
 			clientId: appId,
 			authority: `https://login.microsoftonline.com/${tenantId}`,
-			redirectUri: "/",
+			redirectUri: `${window.location.origin}/_layouts/15/workbench.aspx`,
 		},
 		cache: {
-			cacheLocation: "localStorage",
+			cacheLocation: "sessionStorage",
 			storeAuthStateInCookie: false,
 		},
 	};
