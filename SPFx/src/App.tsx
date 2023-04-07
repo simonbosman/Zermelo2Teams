@@ -54,6 +54,7 @@ export default class TokenWrapper extends React.Component<AppProps> {
 class App extends React.Component<AppProps, AppState> {
 	static contextType = MsalContext;
 	private eventStatus: EventStatus = EventStatus.None;
+	private showPopup: boolean = false;
 
 	constructor(props: AppProps) {
 		super(props);
@@ -86,10 +87,12 @@ class App extends React.Component<AppProps, AppState> {
 		};
 		if (
 			!isAuthenticated &&
-			this.context.inProgress === InteractionStatus.None
+			this.context.inProgress === InteractionStatus.None &&
+			this.showPopup == false
 		) {
+			this.showPopup = true;
 			await msalInst
-				.loginRedirect(loginRequest)
+				.loginPopup()
 				.catch((error) => console.error(error));
 		} else if (this.context.inProgress === InteractionStatus.None) {
 			let scopes = {
@@ -99,6 +102,7 @@ class App extends React.Component<AppProps, AppState> {
 			msalInst.acquireTokenSilent(scopes)
 				.then((authRes: AuthenticationResult) => {
 					token = authRes.accessToken;
+					this.showPopup = false;
 					this.getItems();
 				})
 				.catch((error) => console.error(error));

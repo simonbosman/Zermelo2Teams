@@ -6,7 +6,7 @@ export const msalConfig = (tenantId: string, appId: string) => {
 			redirectUri: `${window.location.origin}/_layouts/15/workbench.aspx`,
 		},
 		cache: {
-			cacheLocation: "sessionStorage",
+			cacheLocation: "localStorage",
 			storeAuthStateInCookie: false,
 		},
 	};
