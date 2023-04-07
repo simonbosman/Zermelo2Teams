@@ -13,7 +13,6 @@ import CalendarComponent, {
 import { ZermeloEvents } from "./model/ZermeloEvent";
 import { ZermeloLiveRosterService } from "./services/ZermeloLiveRosterService";
 import { msalConfig } from "./AuthConfig";
-import { useEffect, useRef } from "react";
 
 export type AppProps = {
 	zermeloLiveRosterService: ZermeloLiveRosterService;
@@ -35,21 +34,6 @@ enum EventStatus {
 }
 
 var token: string;
-
-function useOnChange<T>(value: T, effect: (prev: T, next: T) => void) {
-	const latestValue = useRef(value);
-	const callback = useRef(effect);
-	callback.current = effect;
-
-	useEffect(
-		function onChange() {
-			if (value !== latestValue.current) {
-				callback.current(latestValue.current, value);
-			}
-		},
-		[value]
-	);
-}
 
 export default class TokenWrapper extends React.Component<AppProps> {
 	render() {
@@ -137,12 +121,12 @@ class App extends React.Component<AppProps, AppState> {
 			},
 		};
 		teams.authentication.getAuthToken(authTokenRequest);
+		setTimeout(() => {
+			this.getItems();
+		}, 1500);
 	}
 
 	public async componentDidMount() {
-		useOnChange<string>(token, () => {
-			this.getItems();
-		});
 		if (typeof this.props.microsoftTeams === "undefined") {
 			await this.callLogin();
 		} else {
